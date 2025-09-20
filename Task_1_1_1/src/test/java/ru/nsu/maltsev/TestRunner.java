@@ -61,4 +61,17 @@ public class TestRunner {
         Heapsort.heapsort(a);
         assertArrayEquals(new int[]{1, 9}, a);
     }
+
+    @Test
+    void testLargeArray() {
+        int[] a = new int[1000];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = (int)(Math.random() * 1000) - 500;
+        }
+        int[] expected = a.clone();
+        java.util.Arrays.sort(expected);
+
+        Heapsort.heapsort(a);
+        assertArrayEquals(expected, a);
+    }
 }
