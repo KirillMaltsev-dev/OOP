@@ -1,10 +1,10 @@
-package ru.nsu.maltsev;
+package ru.nsu.maltsev.Task_1_1_1;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class TestRunner {
+public class HeapsortTest {
 
     @Test
     void testEmpty() {
