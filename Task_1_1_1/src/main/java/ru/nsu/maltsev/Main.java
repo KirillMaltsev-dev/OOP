@@ -1,6 +1,6 @@
 package ru.nsu.maltsev;
+
 import java.util.Arrays;
-//test message
 
 public class Main {
     public static void main(String[] args) {

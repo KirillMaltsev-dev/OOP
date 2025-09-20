@@ -1,6 +1,7 @@
 package ru.nsu.maltsev;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestRunner {
@@ -45,5 +46,19 @@ public class TestRunner {
         int[] a = {-1, -5, 3, 0, -2};
         Heapsort.heapsort(a);
         assertArrayEquals(new int[]{-5, -2, -1, 0, 3}, a);
+    }
+
+    @Test
+    void testAllEqual() {
+        int[] a = {7, 7, 7, 7, 7};
+        Heapsort.heapsort(a);
+        assertArrayEquals(new int[]{7, 7, 7, 7, 7}, a);
+    }
+
+    @Test
+    void testTwoElements() {
+        int[] a = {9, 1};
+        Heapsort.heapsort(a);
+        assertArrayEquals(new int[]{1, 9}, a);
     }
 }
