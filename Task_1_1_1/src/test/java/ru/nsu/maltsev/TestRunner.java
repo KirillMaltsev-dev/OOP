@@ -74,4 +74,9 @@ public class TestRunner {
         Heapsort.heapsort(a);
         assertArrayEquals(expected, a);
     }
+
+    @Test
+    void testMainRuns() {
+        Main.main(new String[]{});
+    }
 }
