@@ -1,8 +1,10 @@
 package ru.nsu.maltsev.Task_1_1_2;
 
-import org.junit.jupiter.api.*;
-import java.io.*;
-import java.util.*;
+import org.junit.jupiter.api.Test;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,7 +35,7 @@ public class blackjacktest {
         assertEquals(before - 1, deckSize(deck));
     }
 
-    /** Получаем размер через reflection (так как cards приватный) */
+    /** Получаем размер колоды через reflection */
     private int deckSize(Deck deck) {
         try {
             var f = Deck.class.getDeclaredField("cards");
@@ -84,7 +86,6 @@ public class blackjacktest {
 
     @Test
     void testPlayRoundStopsAfterLose() {
-        // эмулируем ввод игрока: берёт карту (1), затем останавливается (0)
         String input = "1\n0\n0\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         assertDoesNotThrow(Main::playround);
@@ -92,12 +93,25 @@ public class blackjacktest {
 
     @Test
     void testEqualityOfRoundStats() {
-        // Проверка корректности счётчиков
         int before = Main.rounds;
         Main.player_win = 1;
         Main.dealer_win = 2;
         Main.rounds++;
         assertTrue(Main.player_win <= Main.rounds);
         assertEquals(before + 1, Main.rounds);
+    }
+
+    @Test
+    void testMainFullGameLoopExitImmediately() {
+        String input = "0\n0\n0\n0\n0\n0\n0\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        assertDoesNotThrow(() -> Main.main(new String[]{}));
+    }
+
+    @Test
+    void testMainFullGameLoopContinueOnceThenExit() {
+        String input = "1\n0\n0\n0\n0\n0\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        assertDoesNotThrow(() -> Main.main(new String[]{}));
     }
 }

@@ -114,6 +114,7 @@ public class Main {
         while (play) {
             playround();
             System.out.println("Сыграем следующий раунд? Введите '1' чтобы продолжить, '0' чтобы выйти");
+            if (!in.hasNextInt()) break; // <--- защита от конца ввода
             int next = in.nextInt();
             play = (next == 1);
         }
