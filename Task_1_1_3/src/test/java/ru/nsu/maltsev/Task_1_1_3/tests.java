@@ -502,4 +502,61 @@ public class tests {
         Assertions.assertEquals(-5, result.get("x"));
         Assertions.assertEquals(-10, result.get("y"));
     }
+
+    @Test
+    public void testAddWithTwoVariables() {
+        vars.put("x", 10);
+        vars.put("y", 5);
+        Expression add = new Add(new Variable("x"), new Variable("y"));
+        Assertions.assertEquals(15, add.eval(vars));
+    }
+
+    @Test
+    public void testAddDerivativeOfTwoVariables() {
+        Expression add = new Add(new Variable("x"), new Variable("y"));
+        Expression derivative = add.derivative("x");
+        vars.put("y", 5);
+        Assertions.assertEquals(1, derivative.eval(vars));
+    }
+
+    @Test
+    public void testSubWithTwoVariables() {
+        vars.put("x", 10);
+        vars.put("y", 3);
+        Expression sub = new Sub(new Variable("x"), new Variable("y"));
+        Assertions.assertEquals(7, sub.eval(vars));
+    }
+
+    @Test
+    public void testSubNegativeResult() {
+        Expression sub = new Sub(new Number(5), new Number(10));
+        Assertions.assertEquals(-5, sub.eval(vars));
+    }
+
+    @Test
+    public void testSubSimpleWithVariable() {
+        Expression sub = new Sub(new Number(10), new Variable("x"));
+        Expression simplified = sub.simple();
+        Assertions.assertTrue(simplified instanceof Sub);
+    }
+
+    @Test
+    public void testSimpleAdditionPrint() {
+        outputStream.reset();
+        Expression expr = new Add(new Variable("x"), new Variable("y"));
+        expr.print();
+        Assertions.assertEquals("(x+y)", outputStream.toString());
+    }
+
+    @Test
+    public void testComplexNestedExpression() {
+        // (x + y) * (x - y)
+        vars.put("x", 5);
+        vars.put("y", 3);
+        Expression expr = new Mul(
+                new Add(new Variable("x"), new Variable("y")),
+                new Sub(new Variable("x"), new Variable("y"))
+        );
+        Assertions.assertEquals(16, expr.eval(vars)); // (5+3)*(5-3) = 8*2 = 16
+    }
 }
