@@ -17,7 +17,6 @@ public class Main {
         e.print();
         System.out.println();
 
-        // Показать упрощенное выражение
         Expression simplified = e.simple();
         System.out.print("simplified expression: ");
         simplified.print();
@@ -31,7 +30,6 @@ public class Main {
         de.print();
         System.out.println();
 
-        // Упростить производную
         Expression simplifiedDe = de.simple();
         System.out.print("simplified derivative: ");
         simplifiedDe.print();
@@ -42,7 +40,6 @@ public class Main {
 
         Map<String, Integer> vars = parseVars(values);
 
-        // Можно вычислять упрощенное выражение (будет быстрее)
         int result = simplified.eval(vars);
         System.out.println("The value for the specified variables: " + result);
     }

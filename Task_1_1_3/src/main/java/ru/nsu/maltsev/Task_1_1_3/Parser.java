@@ -5,7 +5,7 @@ public class Parser {
     private int pos;
 
     public Parser(String input) {
-        this.input = input.replaceAll("\\s+", ""); // убрать пробелы
+        this.input = input.replaceAll("\\s+", "");
         this.pos = 0;
     }
 
@@ -17,7 +17,6 @@ public class Parser {
         return result;
     }
 
-    //Сумма и разность
     private Expression parseExpression() {
         Expression left = parseTerm();
         while (true) {
@@ -37,7 +36,6 @@ public class Parser {
         return left;
     }
 
-    // Умножение и деление
     private Expression parseTerm() {
         Expression left = parseFactor();
         while (true) {
@@ -57,7 +55,6 @@ public class Parser {
         return left;
     }
 
-    // Число, переменная или выражение в скобках
     private Expression parseFactor() {
         char c = peek();
         if (c == '(') {
