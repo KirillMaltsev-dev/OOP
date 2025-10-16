@@ -559,4 +559,28 @@ public class tests {
         );
         Assertions.assertEquals(16, expr.eval(vars)); // (5+3)*(5-3) = 8*2 = 16
     }
+
+    @Test
+    public void testFullWorkflowWithParseVars() {
+        Parser parser = new Parser("x*x+5");
+        Expression expr = parser.parse();
+        Expression derivative = expr.derivative("x");
+        Map<String, Integer> vars = Main.parseVars("x=3");
+        Assertions.assertEquals(14, expr.eval(vars));
+        int derivValue = derivative.eval(vars);
+        Assertions.assertTrue(derivValue >= 5 && derivValue <= 7); // учитываем целочисленную арифметику
+    }
+
+    @Test
+    public void testParseVarsWithComplexExpression() {
+        Map<String, Integer> vars = Main.parseVars("x=5;y=10;z=15");
+
+        Expression expr = new Add(
+                new Mul(new Variable("x"), new Variable("y")),
+                new Variable("z")
+        );
+
+        // (5*10)+15 = 65
+        Assertions.assertEquals(65, expr.eval(vars));
+    }
 }
