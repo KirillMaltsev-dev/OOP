@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.nsu.maltsev.Task_1_1_2.blackjacktest" tests="11" skipped="0" failures="0" errors="0" timestamp="2025-10-13T02:45:39.024Z" hostname="ULTRA-LAPTAPTRU" time="0.155">
+  <properties/>
+  <testcase name="testCardToStringContainsInfo()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.061"/>
+  <testcase name="testPlayRoundStopsAfterLose()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.045"/>
+  <testcase name="testDealerScoreAndAceLogic()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.004"/>
+  <testcase name="testDealerShowHandAndReveal()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.003"/>
+  <testcase name="testDeckDrawReducesSize()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.002"/>
+  <testcase name="testMainPlayerTurnLogic()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.002"/>
+  <testcase name="testCardValues()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.001"/>
+  <testcase name="testMainFullGameLoopContinueOnceThenExit()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.008"/>
+  <testcase name="testMainFullGameLoopExitImmediately()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.007"/>
+  <testcase name="testMainDealerTurnLogic()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.003"/>
+  <testcase name="testEqualityOfRoundStats()" classname="ru.nsu.maltsev.Task_1_1_2.blackjacktest" time="0.002"/>
+  <system-out><![CDATA[Раунд 1
+Дилер раздал карты
+	Ваши карты: [Шестерка Червы (6), Тройка Крести (3)] => 9
+	Карты дилера: [Дама Червы (10), <Закрытая карта>]
+Ваш ход
+-------
+Введите “1”, чтобы взять карту, и “0”, чтобы остановиться...
+Вы открыли карту: Валет Бубны (10)
+Ваши карты: 
+[Шестерка Червы (6), Тройка Крести (3), Валет Бубны (10)] => 19
+Карты дилера: 
+[Дама Червы (10), <Закрытая карта>]
+Введите “1”, чтобы взять карту, и “0”, чтобы остановиться...
+Ход дилера
+-------
+Дилер открывает закрытую карту: Четверка Пики (4)
+Ваши карты: 
+[Шестерка Червы (6), Тройка Крести (3), Валет Бубны (10)] => 19
+Карты дилера: 
+[Дама Червы (10), Четверка Пики (4)] => 14
+Дилер открывает карту: Тройка Червы (3)
+Ваши карты: 
+[Шестерка Червы (6), Тройка Крести (3), Валет Бубны (10)] => 19
+Карты дилера: 
+[Дама Червы (10), Четверка Пики (4), Тройка Червы (3)] => 17
+Вы набрали больше очков, чем дилер, поздравляю!
+1:0
+[Тройка Пики (3), Валет Бубны (10)] => 13
+[Тройка Пики (3), <Закрытая карта>]
+Дилер открывает закрытую карту: Валет Бубны (10)
+Вы открыли карту: Шестерка Бубны (6)
+Ваши карты: 
+[Шестерка Бубны (6)] => 6
+Карты дилера: 
+Добро пожаловать в консольный Блэкджек!
+Раунд 2
+Дилер раздал карты
+	Ваши карты: [Девятка Червы (9), Пятерка Пики (5)] => 14
+	Карты дилера: [Пятерка Крести (5), <Закрытая карта>]
+Ваш ход
+-------
+Введите “1”, чтобы взять карту, и “0”, чтобы остановиться...
+Вы открыли карту: Десятка Бубны (10)
+Ваши карты: 
+[Девятка Червы (9), Пятерка Пики (5), Десятка Бубны (10)] => 24
+Карты дилера: 
+[Пятерка Крести (5), <Закрытая карта>]
+Сумма привысила 21 - вы проиграли
+1:1
+Сыграем следующий раунд? Введите '1' чтобы продолжить, '0' чтобы выйти
+Добро пожаловать в консольный Блэкджек!
+Раунд 3
+Дилер раздал карты
+	Ваши карты: [Восьмерка Пики (8), Семерка Червы (7)] => 15
+	Карты дилера: [Дама Пики (10), <Закрытая карта>]
+Ваш ход
+-------
+Введите “1”, чтобы взять карту, и “0”, чтобы остановиться...
+Ход дилера
+-------
+Дилер открывает закрытую карту: Туз Пики (11)
+Ваши карты: 
+[Восьмерка Пики (8), Семерка Червы (7)] => 15
+Карты дилера: 
+[Дама Пики (10), Туз Пики (11)] => 21
+К сожалению, дилер набрал больше очков - вы проиграли
+1:2
+Сыграем следующий раунд? Введите '1' чтобы продолжить, '0' чтобы выйти
+Дилер открывает закрытую карту: Девятка Червы (9)
+Ваши карты: 
+[] => 0
+Карты дилера: 
+[Валет Пики (10), Девятка Червы (9)] => 19
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

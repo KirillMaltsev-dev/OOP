@@ -470,4 +470,36 @@ public class tests {
         Expression simplified = expr.simple();
         Assertions.assertEquals(16, simplified.eval(vars));
     }
+
+    @Test
+    public void testParseVarsSingleVariable() {
+        Map<String, Integer> result = Main.parseVars("x=10");
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(10, result.get("x"));
+    }
+
+    @Test
+    public void testParseVarsMultipleVariables() {
+        Map<String, Integer> result = Main.parseVars("x=10;y=20;z=30");
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals(10, result.get("x"));
+        Assertions.assertEquals(20, result.get("y"));
+        Assertions.assertEquals(30, result.get("z"));
+    }
+
+    @Test
+    public void testParseVarsWithSpaces() {
+        Map<String, Integer> result = Main.parseVars("x = 10 ; y = 20");
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(10, result.get("x"));
+        Assertions.assertEquals(20, result.get("y"));
+    }
+
+    @Test
+    public void testParseVarsNegativeValues() {
+        Map<String, Integer> result = Main.parseVars("x=-5;y=-10");
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(-5, result.get("x"));
+        Assertions.assertEquals(-10, result.get("y"));
+    }
 }

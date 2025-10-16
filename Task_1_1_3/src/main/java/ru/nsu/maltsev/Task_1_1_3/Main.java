@@ -44,7 +44,7 @@ public class Main {
         System.out.println("The value for the specified variables: " + result);
     }
 
-    private static Map<String, Integer> parseVars(String s) {
+    public static Map<String, Integer> parseVars(String s) {
         String[] assignments = s.split(";");
         Map<String, Integer> map = new java.util.HashMap<>();
         for (String assign : assignments) {
