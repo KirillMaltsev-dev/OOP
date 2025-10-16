@@ -583,4 +583,84 @@ public class tests {
         // (5*10)+15 = 65
         Assertions.assertEquals(65, expr.eval(vars));
     }
+
+    @Test
+    public void testParseVarsLargeNumbers() {
+        Map<String, Integer> result = Main.parseVars("x=1000000;y=999999");
+        Assertions.assertEquals(1000000, result.get("x"));
+        Assertions.assertEquals(999999, result.get("y"));
+    }
+
+    @Test
+    public void testParseVarsMultiCharacterVariableNames() {
+        Map<String, Integer> result = Main.parseVars("alpha=10;beta=20;gamma=30");
+        Assertions.assertEquals(10, result.get("alpha"));
+        Assertions.assertEquals(20, result.get("beta"));
+        Assertions.assertEquals(30, result.get("gamma"));
+    }
+
+    @Test
+    public void testParseVarsZeroValue() {
+        Map<String, Integer> result = Main.parseVars("x=0;y=0");
+        Assertions.assertEquals(0, result.get("x"));
+        Assertions.assertEquals(0, result.get("y"));
+    }
+
+    @Test
+    public void testParseVarsExtraSpaces() {
+        Map<String, Integer> result = Main.parseVars("  x  =  10  ;  y  =  20  ");
+        Assertions.assertEquals(10, result.get("x"));
+        Assertions.assertEquals(20, result.get("y"));
+    }
+
+    @Test
+    public void testParseVarsSingleDigit() {
+        Map<String, Integer> result = Main.parseVars("a=1;b=2;c=3");
+        Assertions.assertEquals(1, result.get("a"));
+        Assertions.assertEquals(2, result.get("b"));
+        Assertions.assertEquals(3, result.get("c"));
+    }
+
+    @Test
+    public void testParseVarsMixedCase() {
+        Map<String, Integer> result = Main.parseVars("X=10;y=20;MyVar=30");
+        Assertions.assertEquals(10, result.get("X"));
+        Assertions.assertEquals(20, result.get("y"));
+        Assertions.assertEquals(30, result.get("MyVar"));
+    }
+
+    @Test
+    public void testParseVarsOverwriteVariable() {
+        // Если переменная повторяется, последнее значение перезапишет предыдущее
+        Map<String, Integer> result = Main.parseVars("x=10;x=20");
+        Assertions.assertEquals(20, result.get("x"));
+    }
+
+    @Test
+    public void testParseVarsInvalidFormatNoEquals() {
+        // Должно выбросить исключение, если нет знака "="
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class,
+                () -> Main.parseVars("x10"));
+    }
+
+    @Test
+    public void testParseVarsInvalidFormatNotNumber() {
+        // Должно выбросить исключение, если значение не число
+        Assertions.assertThrows(NumberFormatException.class,
+                () -> Main.parseVars("x=abc"));
+    }
+
+    @Test
+    public void testParseVarsTrailingSemicolon() {
+        Map<String, Integer> result = Main.parseVars("x=10;y=20;");
+        // Может вызвать ошибку из-за пустого элемента после последней точки с запятой
+        Assertions.assertTrue(result.containsKey("x"));
+        Assertions.assertTrue(result.containsKey("y"));
+    }
+
+    @Test
+    public void testParseVarsVeryLongVariableName() {
+        Map<String, Integer> result = Main.parseVars("thisIsAVeryLongVariableName=42");
+        Assertions.assertEquals(42, result.get("thisIsAVeryLongVariableName"));
+    }
 }
