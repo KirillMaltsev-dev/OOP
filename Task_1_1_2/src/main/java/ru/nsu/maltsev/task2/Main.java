@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.Task_1_1_2;
+package ru.nsu.maltsev.task2;
 
 import java.util.Scanner;
 

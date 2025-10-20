@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.Task_1_1_2;
+package ru.nsu.maltsev.task2;
 
 enum Suit {Червы, Пики, Бубны, Крести};
 enum Rank {Двойка, Тройка, Четверка, Пятерка, Шестерка, Семерка, Восьмерка, Девятка, Десятка,

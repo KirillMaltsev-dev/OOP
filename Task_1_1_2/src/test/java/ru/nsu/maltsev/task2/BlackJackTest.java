@@ -1,8 +1,7 @@
-package ru.nsu.maltsev.Task_1_1_2;
+package ru.nsu.maltsev.task2;
 
 import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Расширенные тесты для покрытия >80%
  */
-public class blackjacktest {
+public class BlackJackTest {
 
     @Test
     void testCardValues() {

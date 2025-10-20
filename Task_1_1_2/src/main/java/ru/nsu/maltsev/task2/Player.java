@@ -1,9 +1,9 @@
-package ru.nsu.maltsev.Task_1_1_2;
+package ru.nsu.maltsev.task2;
 
 import java.util.List;
 import java.util.ArrayList;
 
-public class Dealer{
+public class Player {
     protected final List<Card> hand = new ArrayList<>();
 
     public void takeCard(Card card){
@@ -40,15 +40,5 @@ public class Dealer{
         }
         System.out.printf("]");
         System.out.printf(" => " + getscore() + "\n");
-    }
-
-    public void showOneCard(){
-        if (!hand.isEmpty())
-            System.out.println("[" + hand.get(0).ToString() + ", <Закрытая карта>]");
-    }
-    public void revealHiddenCard() {
-        if (hand.size() >= 2) {
-            System.out.println("Дилер открывает закрытую карту: " + hand.get(1).ToString());
-        }
     }
 }
