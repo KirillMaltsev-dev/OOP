@@ -1,6 +1,9 @@
-package ru.nsu.maltsev;
+package ru.nsu.maltsev.Task_1_1_1;
 
-public class Heapsort {
+public final class Heapsort {
+    private Heapsort() {
+        throw new UnsupportedOperationException("This class can not be instantiated");
+    }
     public static void heapsort(int[] a) {
         if (a == null || a.length < 2) return;
         int n = a.length;

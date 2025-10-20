@@ -1,9 +1,10 @@
-package ru.nsu.maltsev;
+package ru.nsu.maltsev.Task_1_1_1;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-public class TestRunner {
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+public class HeapsortTest {
 
     @Test
     void testEmpty() {
@@ -45,5 +46,37 @@ public class TestRunner {
         int[] a = {-1, -5, 3, 0, -2};
         Heapsort.heapsort(a);
         assertArrayEquals(new int[]{-5, -2, -1, 0, 3}, a);
+    }
+
+    @Test
+    void testAllEqual() {
+        int[] a = {7, 7, 7, 7, 7};
+        Heapsort.heapsort(a);
+        assertArrayEquals(new int[]{7, 7, 7, 7, 7}, a);
+    }
+
+    @Test
+    void testTwoElements() {
+        int[] a = {9, 1};
+        Heapsort.heapsort(a);
+        assertArrayEquals(new int[]{1, 9}, a);
+    }
+
+    @Test
+    void testLargeArray() {
+        int[] a = new int[1000];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = (int)(Math.random() * 1000) - 500;
+        }
+        int[] expected = a.clone();
+        java.util.Arrays.sort(expected);
+
+        Heapsort.heapsort(a);
+        assertArrayEquals(expected, a);
+    }
+
+    @Test
+    void testMainRuns() {
+        Main.main(new String[]{});
     }
 }

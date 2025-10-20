@@ -1,4 +1,5 @@
-package ru.nsu.maltsev;
+package ru.nsu.maltsev.Task_1_1_1;
+
 import java.util.Arrays;
 
 public class Main {
