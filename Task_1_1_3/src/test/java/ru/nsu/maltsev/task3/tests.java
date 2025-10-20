@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.Task_1_1_3;
+package ru.nsu.maltsev.task3;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
