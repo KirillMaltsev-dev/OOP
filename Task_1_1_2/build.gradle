@@ -3,11 +3,7 @@ plugins {
     id 'jacoco'
 }
 
-<<<<<<< HEAD:Task_1_1_3/build.gradle
-group = 'ru.nsu.maltsev.Task_1_1_3'
-=======
-group = 'ru.nsu.maltsev.task1'
->>>>>>> origin/main:Task_1_1_1/build.gradle
+group = 'ru.nsu.maltsev.task2'
 version = '1.0-SNAPSHOT'
 
 repositories {
