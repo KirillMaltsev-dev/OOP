@@ -1,6 +1,13 @@
-package ru.nsu.maltsev;
+package ru.nsu.maltsev.task1;
 
+/**
+ * Heap sort
+ */
 public class Heapsort {
+    /**
+     * Sort an array
+     * @param a array to sort
+     */
     public static void heapsort(int[] a) {
         if (a == null || a.length < 2) return;
         int n = a.length;

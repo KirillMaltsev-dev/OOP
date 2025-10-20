@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.Task_1_1_1;
+package ru.nsu.maltsev.task1;
 
 import org.junit.jupiter.api.Test;
 
