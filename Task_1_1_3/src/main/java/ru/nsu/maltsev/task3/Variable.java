@@ -28,7 +28,7 @@ public class Variable implements Expression{
         System.out.print(name);
     }
 
-    public Expression simple(){
+    public Expression simplify(){
         return this;
     }
 

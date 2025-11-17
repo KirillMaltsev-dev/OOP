@@ -17,7 +17,7 @@ public class Main {
         e.print();
         System.out.println();
 
-        Expression simplified = e.simple();
+        Expression simplified = e.simplify();
         System.out.print("simplified expression: ");
         simplified.print();
         System.out.println();
@@ -30,7 +30,7 @@ public class Main {
         de.print();
         System.out.println();
 
-        Expression simplifiedDe = de.simple();
+        Expression simplifiedDe = de.simplify();
         System.out.print("simplified derivative: ");
         simplifiedDe.print();
         System.out.println();
