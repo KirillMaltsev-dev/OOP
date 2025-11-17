@@ -49,7 +49,7 @@ public class tests {
     @Test
     public void testNumberSimple() {
         Expression num = new Number(5);
-        Expression simplified = num.simple();
+        Expression simplified = num.simplify();
         Assertions.assertTrue(simplified instanceof Number);
         Assertions.assertEquals(5, simplified.eval(vars));
     }
@@ -99,7 +99,7 @@ public class tests {
     @Test
     public void testVariableSimple() {
         Expression var = new Variable("x");
-        Expression simplified = var.simple();
+        Expression simplified = var.simplify();
         Assertions.assertTrue(simplified instanceof Variable);
     }
 
@@ -135,7 +135,7 @@ public class tests {
     @Test
     public void testAddSimpleWithNumbers() {
         Expression add = new Add(new Number(2), new Number(3));
-        Expression simplified = add.simple();
+        Expression simplified = add.simplify();
         Assertions.assertTrue(simplified instanceof Number);
         Assertions.assertEquals(5, simplified.eval(vars));
     }
@@ -143,7 +143,7 @@ public class tests {
     @Test
     public void testAddSimpleWithVariable() {
         Expression add = new Add(new Number(2), new Variable("x"));
-        Expression simplified = add.simple();
+        Expression simplified = add.simplify();
         Assertions.assertTrue(simplified instanceof Add);
     }
 
@@ -173,7 +173,7 @@ public class tests {
     @Test
     public void testSubSimpleWithNumbers() {
         Expression sub = new Sub(new Number(10), new Number(3));
-        Expression simplified = sub.simple();
+        Expression simplified = sub.simplify();
         Assertions.assertTrue(simplified instanceof Number);
         Assertions.assertEquals(7, simplified.eval(vars));
     }
@@ -181,7 +181,7 @@ public class tests {
     @Test
     public void testSubSimpleSameExpression() {
         Expression sub = new Sub(new Variable("x"), new Variable("x"));
-        Expression simplified = sub.simple();
+        Expression simplified = sub.simplify();
         // Note: This test might fail with current implementation
         // due to toString() comparison issue
         Assertions.assertTrue(simplified instanceof Number || simplified instanceof Sub);
@@ -215,7 +215,7 @@ public class tests {
     @Test
     public void testMulSimpleWithNumbers() {
         Expression mul = new Mul(new Number(3), new Number(4));
-        Expression simplified = mul.simple();
+        Expression simplified = mul.simplify();
         Assertions.assertTrue(simplified instanceof Number);
         Assertions.assertEquals(12, simplified.eval(vars));
     }
@@ -223,7 +223,7 @@ public class tests {
     @Test
     public void testMulSimpleWithZeroLeft() {
         Expression mul = new Mul(new Number(0), new Variable("x"));
-        Expression simplified = mul.simple();
+        Expression simplified = mul.simplify();
         Assertions.assertTrue(simplified instanceof Number);
         Assertions.assertEquals(0, simplified.eval(vars));
     }
@@ -231,7 +231,7 @@ public class tests {
     @Test
     public void testMulSimpleWithZeroRight() {
         Expression mul = new Mul(new Variable("x"), new Number(0));
-        Expression simplified = mul.simple();
+        Expression simplified = mul.simplify();
         Assertions.assertTrue(simplified instanceof Number);
         Assertions.assertEquals(0, simplified.eval(vars));
     }
@@ -239,14 +239,14 @@ public class tests {
     @Test
     public void testMulSimpleWithOneLeft() {
         Expression mul = new Mul(new Number(1), new Variable("x"));
-        Expression simplified = mul.simple();
+        Expression simplified = mul.simplify();
         Assertions.assertTrue(simplified instanceof Variable);
     }
 
     @Test
     public void testMulSimpleWithOneRight() {
         Expression mul = new Mul(new Variable("x"), new Number(1));
-        Expression simplified = mul.simple();
+        Expression simplified = mul.simplify();
         Assertions.assertTrue(simplified instanceof Variable);
     }
 
@@ -278,7 +278,7 @@ public class tests {
     @Test
     public void testDivSimpleWithNumbers() {
         Expression div = new Div(new Number(20), new Number(4));
-        Expression simplified = div.simple();
+        Expression simplified = div.simplify();
         Assertions.assertTrue(simplified instanceof Number);
         Assertions.assertEquals(5, simplified.eval(vars));
     }
@@ -286,14 +286,14 @@ public class tests {
     @Test
     public void testDivSimpleWithOne() {
         Expression div = new Div(new Variable("x"), new Number(1));
-        Expression simplified = div.simple();
+        Expression simplified = div.simplify();
         Assertions.assertTrue(simplified instanceof Variable);
     }
 
     @Test
     public void testDivSimpleZeroDivided() {
         Expression div = new Div(new Number(0), new Variable("x"));
-        Expression simplified = div.simple();
+        Expression simplified = div.simplify();
         Assertions.assertTrue(simplified instanceof Number);
         Assertions.assertEquals(0, simplified.eval(vars));
     }
@@ -467,7 +467,7 @@ public class tests {
                 new Add(new Number(5), new Number(3)),
                 new Add(new Number(2), new Number(0))
         );
-        Expression simplified = expr.simple();
+        Expression simplified = expr.simplify();
         Assertions.assertEquals(16, simplified.eval(vars));
     }
 
@@ -536,7 +536,7 @@ public class tests {
     @Test
     public void testSubSimpleWithVariable() {
         Expression sub = new Sub(new Number(10), new Variable("x"));
-        Expression simplified = sub.simple();
+        Expression simplified = sub.simplify();
         Assertions.assertTrue(simplified instanceof Sub);
     }
 

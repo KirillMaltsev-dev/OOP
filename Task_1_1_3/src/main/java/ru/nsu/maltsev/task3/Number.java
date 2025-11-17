@@ -21,7 +21,7 @@ public class Number extends Expression{
         System.out.print(value);
     }
 
-    public Expression simple(){
+    public Expression simplify(){
         return this;
     }
 
