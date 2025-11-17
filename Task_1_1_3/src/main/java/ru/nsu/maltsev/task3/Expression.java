@@ -2,10 +2,44 @@ package ru.nsu.maltsev.task3;
 
 import java.util.Map;
 
-public abstract class Expression {
-    public abstract int eval(Map<String, Integer> vars);
-    public abstract Expression derivative(String var);
-    public abstract void print();
-    public abstract Expression simple();
-    public abstract boolean structuralEquals(Expression other);
+/**
+ * Интерфейс для представления математических выражений.
+ */
+public interface Expression {
+
+    /**
+     * Вычисляет значение выражения при заданных значениях переменных.
+     *
+     * @param vars отображение имён переменных на их значения
+     * @return результат вычисления выражения
+     */
+    int eval(Map<String, Integer> vars);
+
+    /**
+     * Вычисляет производную выражения по указанной переменной.
+     *
+     * @param var имя переменной, по которой берётся производная
+     * @return выражение, представляющее производную
+     */
+    Expression derivative(String var);
+
+    /**
+     * Выводит выражение в текстовом виде в стандартный поток вывода.
+     */
+    void print();
+
+    /**
+     * Упрощает выражение, применяя алгебраические правила.
+     *
+     * @return упрощённое выражение
+     */
+    Expression simple();
+
+    /**
+     * Проверяет структурное равенство двух выражений.
+     *
+     * @param other выражение для сравнения
+     * @return true, если выражения структурно равны, иначе false
+     */
+    boolean structuralEquals(Expression other);
 }

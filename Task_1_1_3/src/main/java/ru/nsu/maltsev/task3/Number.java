@@ -2,7 +2,7 @@ package ru.nsu.maltsev.task3;
 
 import java.util.Map;
 
-public class Number extends Expression{
+public class Number implements Expression{
     private final int value;
 
     public Number(int value){

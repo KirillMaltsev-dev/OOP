@@ -2,7 +2,7 @@ package ru.nsu.maltsev.task3;
 
 import java.util.Map;
 
-public class Div extends Expression{
+public class Div implements Expression{
     private final Expression left;
     private final Expression right;
 
