@@ -1,0 +1,5 @@
+DIRECTED
+A B
+A C
+B C
+C D
