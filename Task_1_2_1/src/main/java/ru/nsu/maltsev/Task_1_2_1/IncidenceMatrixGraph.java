@@ -226,32 +226,6 @@ public class IncidenceMatrixGraph<V> implements Graph<V> {
     }
 
     @Override
-    public void readFromFile(String filename) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line = reader.readLine();
-            if (line == null) {
-                throw new IOException("Empty file");
-            }
-            // Далее вершины и рёбра
-            while ((line = reader.readLine()) != null) {
-                if (line.isBlank()) continue;
-                String[] parts = line.trim().split("\\s+");
-                if (parts.length == 1) {
-                    addVertex((V) parts[0]);
-                } else if (parts.length == 2) {
-                    if (!vertexIndices.containsKey((V) parts[0])) {
-                        addVertex((V) parts[0]);
-                    }
-                    if (!vertexIndices.containsKey((V) parts[1])) {
-                        addVertex((V) parts[1]);
-                    }
-                    addEdge((V) parts[0], (V) parts[1]);
-                }
-            }
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Incidence Matrix Graph\n");
         sb.append(directed ? "Directed\n" : "Undirected\n");
