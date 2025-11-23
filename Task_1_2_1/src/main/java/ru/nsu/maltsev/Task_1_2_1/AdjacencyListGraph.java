@@ -12,7 +12,6 @@ import java.io.FileReader;
 
 /**
  * Реализация графа через список смежности.
- * @param <V> тип вершины
  */
 public class AdjacencyListGraph<V> implements Graph<V> {
     private final Map<V, List<V>> adjacencyList = new HashMap<>();
@@ -120,9 +119,6 @@ public class AdjacencyListGraph<V> implements Graph<V> {
             if (line == null) {
                 throw new IOException("Empty file");
             }
-            // формат первой строки: DIRECTED или UNDIRECTED
-            // уже задан при создании объекта
-            // далее ожидаем вершины и рёбра
             while ((line = reader.readLine()) != null) {
                 if (line.isBlank()) continue;
                 String[] parts = line.trim().split("\\s+");

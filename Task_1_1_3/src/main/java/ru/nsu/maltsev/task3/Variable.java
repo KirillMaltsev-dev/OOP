@@ -2,7 +2,7 @@ package ru.nsu.maltsev.task3;
 
 import java.util.Map;
 
-public class Variable extends Expression{
+public class Variable implements Expression{
     private final String name;
 
     public Variable(String name){
@@ -28,7 +28,7 @@ public class Variable extends Expression{
         System.out.print(name);
     }
 
-    public Expression simplify(){
+    public Expression simple(){
         return this;
     }
 

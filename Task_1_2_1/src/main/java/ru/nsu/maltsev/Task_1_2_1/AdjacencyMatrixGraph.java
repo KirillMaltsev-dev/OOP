@@ -12,7 +12,6 @@ import java.io.FileReader;
 
 /**
  * Реализация графа через матрицу смежности.
- * @param <V> тип вершины
  */
 public class AdjacencyMatrixGraph<V> implements Graph<V> {
     private final boolean directed;

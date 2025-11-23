@@ -2,7 +2,7 @@ package ru.nsu.maltsev.task3;
 
 import java.util.Map;
 
-public class Add extends Expression{
+public class Add implements Expression{
     private final Expression left;
     private final Expression right;
 
@@ -27,9 +27,9 @@ public class Add extends Expression{
         System.out.print(")");
     }
 
-    public Expression simplify(){
-        Expression l = left.simplify();
-        Expression r = right.simplify();
+    public Expression simple(){
+        Expression l = left.simple();
+        Expression r = right.simple();
         if (l instanceof Number && r instanceof Number){
             return new Number(((Number) l).getValue() + ((Number) r).getValue());
         }

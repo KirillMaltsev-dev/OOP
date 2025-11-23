@@ -5,8 +5,6 @@ import java.util.Objects;
 /**
  * Класс, представляющий ребро графа.
  * Используется для унификации работы с рёбрами в различных реализациях.
- *
- * @param <V> тип вершин
  */
 public class Edge<V> {
     private final V from;
@@ -15,7 +13,6 @@ public class Edge<V> {
 
     /**
      * Создаёт новое ребро.
-     *
      * @param from начальная вершина
      * @param to конечная вершина
      * @param directed является ли ребро направленным
@@ -28,7 +25,6 @@ public class Edge<V> {
 
     /**
      * Возвращает начальную вершину ребра.
-     *
      * @return начальная вершина
      */
     public V getFrom() {
@@ -37,7 +33,6 @@ public class Edge<V> {
 
     /**
      * Возвращает конечную вершину ребра.
-     *
      * @return конечная вершина
      */
     public V getTo() {
@@ -46,7 +41,6 @@ public class Edge<V> {
 
     /**
      * Проверяет, является ли ребро направленным.
-     *
      * @return true, если ребро направленное
      */
     public boolean isDirected() {
@@ -79,8 +73,6 @@ public class Edge<V> {
         if (directed) {
             return Objects.hash(from, to);
         } else {
-            // Для неориентированного ребра хэш должен быть одинаковым
-            // независимо от порядка вершин
             return Objects.hash(from, to) + Objects.hash(to, from);
         }
     }
