@@ -28,9 +28,9 @@ public class Div implements Expression{
     }
 
 
-    public Expression simplify() {
-        Expression l = left.simplify();
-        Expression r = right.simplify();
+    public Expression simple() {
+        Expression l = left.simple();
+        Expression r = right.simple();
 
         if (l instanceof Number && r instanceof Number) {
             return new Number(((Number) l).getValue() / ((Number) r).getValue());
