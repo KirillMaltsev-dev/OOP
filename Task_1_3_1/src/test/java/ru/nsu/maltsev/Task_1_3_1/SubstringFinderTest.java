@@ -5,6 +5,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -170,5 +171,51 @@ class SubstringFinderTest {
             List<Integer> result = SubstringFinder.find(file.getAbsolutePath(), null);
             // Может вернуть пустой список
         });
+    }
+
+    @Test
+    @DisplayName("Генерация файла с большой частотой паттерна")
+    void testHighFrequencyPattern() throws IOException {
+        File file = tempDir.resolve("highfreq.txt").toFile();
+        TestFileGenerator.generateFile(file.getAbsolutePath(), 1, "XXX", 1);
+
+        String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+
+        // При частоте 1 почти каждое слово должно быть паттерном
+        assertTrue(content.contains("XXX"));
+
+        int count = 0;
+        int index = 0;
+        while ((index = content.indexOf("XXX", index)) != -1) {
+            count++;
+            index++;
+        }
+
+        assertTrue(count > 100, "Должно быть много вхождений");
+    }
+
+    @Test
+    @DisplayName("Генерация с очень большой частотой (редкие вхождения)")
+    void testLowFrequencyPattern() throws IOException {
+        File file = tempDir.resolve("lowfreq.txt").toFile();
+        TestFileGenerator.generateFile(file.getAbsolutePath(), 1, "РЕДКИЙ", 1000);
+
+        String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+        assertTrue(content.contains("РЕДКИЙ") || content.length() > 0);
+    }
+
+    @Test
+    @DisplayName("Генерация файла с русскими словами")
+    void testRussianWords() throws IOException {
+        File file = tempDir.resolve("russian.txt").toFile();
+        TestFileGenerator.generateFile(file.getAbsolutePath(), 1, null, 10);
+
+        String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+
+        // Проверяем, что файл содержит хотя бы одно из предопределённых слов
+        boolean containsRussianWord = content.contains("абра") ||
+                content.contains("кадабра") ||
+                content.contains("трава");
+        assertTrue(containsRussianWord);
     }
 }

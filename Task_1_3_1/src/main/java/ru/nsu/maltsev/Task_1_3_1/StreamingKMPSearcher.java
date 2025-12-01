@@ -13,7 +13,10 @@ public class StreamingKMPSearcher {
     private static final int BUFFER_SIZE = 8192; // 8KB буфер
 
     /**
-     * Построение префикс-функции для алгоритма КМП
+     * Построение префикс-функции для алгоритма КМП.
+     *
+     * @param pattern строка-образец для построения префикс-функции
+     * @return массив значений префикс-функции
      */
     private static int[] buildPrefixFunction(String pattern) {
         int m = pattern.length();
@@ -38,8 +41,13 @@ public class StreamingKMPSearcher {
     }
 
     /**
-     * Потоковый поиск подстроки в файле
-     * Читает файл блоками, не загружая весь в память
+     * Потоковый поиск подстроки в файле.
+     * Читает файл блоками, не загружая весь в память.
+     *
+     * @param fileName имя файла для поиска
+     * @param pattern искомая подстрока
+     * @return список индексов начала каждого вхождения (Long для больших файлов)
+     * @throws IOException если возникла ошибка при чтении файла
      */
     public static List<Long> searchInFile(String fileName, String pattern) throws IOException {
         List<Long> results = new ArrayList<>();
@@ -89,7 +97,13 @@ public class StreamingKMPSearcher {
     }
 
     /**
-     * Вспомогательный метод для возврата List<Integer> (для совместимости)
+     * Вспомогательный метод для возврата List&lt;Integer&gt; (для совместимости).
+     * Используйте searchInFile() для очень больших файлов.
+     *
+     * @param fileName имя файла для поиска
+     * @param pattern искомая подстрока
+     * @return список индексов начала каждого вхождения (Integer)
+     * @throws IOException если возникла ошибка при чтении файла
      */
     public static List<Integer> searchInFileAsInt(String fileName, String pattern) throws IOException {
         List<Long> longResults = searchInFile(fileName, pattern);

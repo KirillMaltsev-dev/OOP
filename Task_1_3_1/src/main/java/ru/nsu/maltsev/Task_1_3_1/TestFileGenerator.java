@@ -15,11 +15,13 @@ public class TestFileGenerator {
     };
 
     /**
-     * Генерирует файл заданного размера со случайным текстом
-     * fileName - имя выходного файла
-     * sizeInMB - размер файла в мегабайтах
-     * pattern - строка, которая будет встречаться с заданной частотой
-     * patternFrequency - как часто вставлять pattern (каждые N слов)
+     * Генерирует файл заданного размера со случайным текстом.
+     *
+     * @param fileName имя выходного файла
+     * @param sizeInMB размер файла в мегабайтах
+     * @param pattern строка, которая будет встречаться с заданной частотой
+     * @param patternFrequency как часто вставлять pattern (каждые N слов)
+     * @throws IOException если возникла ошибка при записи файла
      */
     public static void generateFile(String fileName, long sizeInMB,
                                     String pattern, int patternFrequency) throws IOException {
@@ -68,7 +70,11 @@ public class TestFileGenerator {
     }
 
     /**
-     * Генерирует простой тестовый файл с заданным содержимым
+     * Генерирует простой тестовый файл с заданным содержимым.
+     *
+     * @param fileName имя выходного файла
+     * @param content содержимое файла
+     * @throws IOException если возникла ошибка при записи файла
      */
     public static void generateSimpleFile(String fileName, String content) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(

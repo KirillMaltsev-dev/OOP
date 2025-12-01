@@ -11,10 +11,11 @@ import java.util.Scanner;
 public class SubstringFinder {
 
     /**
-     * Главный метод для поиска всех вхождений подстроки в файле
-     * Использует потоковое чтение для работы с большими файлами
-     * fileName - имя файла для поиска
-     * pattern - искомая подстрока
+     * Главный метод для поиска всех вхождений подстроки в файле.
+     * Использует потоковое чтение для работы с большими файлами.
+     *
+     * @param fileName имя файла для поиска
+     * @param pattern искомая подстрока
      * @return список индексов начала каждого вхождения
      */
     public static List<Integer> find(String fileName, String pattern) {
@@ -29,7 +30,11 @@ public class SubstringFinder {
     }
 
     /**
-     * Версия для очень больших файлов
+     * Версия для очень больших файлов (индексы могут превышать int).
+     *
+     * @param fileName имя файла для поиска
+     * @param pattern искомая подстрока
+     * @return список индексов начала каждого вхождения (Long)
      */
     public static List<Long> findLong(String fileName, String pattern) {
         try {
@@ -80,7 +85,9 @@ public class SubstringFinder {
     }
 
     /**
-     * Режим поиска в файле
+     * Режим поиска в файле.
+     *
+     * @param scanner объект Scanner для чтения ввода пользователя
      */
     private static void runSearchMode(Scanner scanner) {
         System.out.print("Введите имя файла (например, input.txt): ");
