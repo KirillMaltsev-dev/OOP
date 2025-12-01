@@ -24,4 +24,14 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
+
+// Исключение классов из отчёта о покрытии
+afterEvaluate {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                '**/Main.class',           // исключить Main
+                '**/Main$*.class',         // исключить внутренние классы Main
+        ])
+    }))
+}
 }
