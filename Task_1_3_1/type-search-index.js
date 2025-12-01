@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"ru.nsu.maltsev.Task_1_3_1","l":"StreamingKMPSearcher"},{"p":"ru.nsu.maltsev.Task_1_3_1","l":"SubstringFinder"},{"p":"ru.nsu.maltsev.Task_1_3_1","l":"TestFileGenerator"}];updateSearchResults();
