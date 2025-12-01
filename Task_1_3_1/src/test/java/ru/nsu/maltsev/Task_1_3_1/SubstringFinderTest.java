@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Тесты для класса SubstringFinder
+ * Расширенные тесты для класса SubstringFinder
  */
 class SubstringFinderTest {
 
@@ -91,5 +91,84 @@ class SubstringFinderTest {
 
         assertEquals(1, result.size());
         assertEquals(4, result.get(0));
+    }
+
+    @Test
+    @DisplayName("Множественный поиск в одном файле")
+    void testMultipleSearches() throws IOException {
+        File file = createTestFile("тест1 тест2 тест3");
+
+        List<Integer> result1 = SubstringFinder.find(file.getAbsolutePath(), "тест");
+        assertEquals(3, result1.size());
+
+        List<Integer> result2 = SubstringFinder.find(file.getAbsolutePath(), "1");
+        assertEquals(1, result2.size());
+    }
+
+    @Test
+    @DisplayName("Поиск в большом файле")
+    void testLargeFileSearch() throws IOException {
+        StringBuilder content = new StringBuilder();
+        for (int i = 0; i < 10000; i++) {
+            content.append("тест ");
+        }
+        File file = createTestFile(content.toString());
+
+        List<Integer> result = SubstringFinder.find(file.getAbsolutePath(), "тест");
+        assertEquals(10000, result.size());
+    }
+
+    @Test
+    @DisplayName("Поиск с различными кодировками символов")
+    void testUTF8Characters() throws IOException {
+        File file = createTestFile("🎉test🎉test🎉");
+        List<Integer> result = SubstringFinder.find(file.getAbsolutePath(), "test");
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    @DisplayName("Поиск подстроки в начале файла")
+    void testPatternAtFileStart() throws IOException {
+        File file = createTestFile("начало текста");
+        List<Integer> result = SubstringFinder.find(file.getAbsolutePath(), "начало");
+
+        assertEquals(1, result.size());
+        assertEquals(0, result.get(0));
+    }
+
+    @Test
+    @DisplayName("Поиск подстроки в конце файла")
+    void testPatternAtFileEnd() throws IOException {
+        File file = createTestFile("текст конец");
+        List<Integer> result = SubstringFinder.find(file.getAbsolutePath(), "конец");
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    @DisplayName("Сравнение find() и findLong()")
+    void testFindVsFindLong() throws IOException {
+        File file = createTestFile("абракадабра");
+
+        List<Integer> intResult = SubstringFinder.find(file.getAbsolutePath(), "а");
+        List<Long> longResult = SubstringFinder.findLong(file.getAbsolutePath(), "а");
+
+        assertEquals(intResult.size(), longResult.size());
+        for (int i = 0; i < intResult.size(); i++) {
+            assertEquals(intResult.get(i).longValue(), longResult.get(i));
+        }
+    }
+
+    @Test
+    @DisplayName("Обработка null в качестве pattern")
+    void testNullPattern() throws IOException {
+        File file = createTestFile("test");
+
+        // Должен вернуть пустой список или выбросить исключение
+        assertDoesNotThrow(() -> {
+            List<Integer> result = SubstringFinder.find(file.getAbsolutePath(), null);
+            // Может вернуть пустой список
+        });
     }
 }
