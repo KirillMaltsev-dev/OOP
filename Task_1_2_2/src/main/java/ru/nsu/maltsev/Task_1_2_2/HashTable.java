@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.Task_1_2_2;
+package ru.nsu.maltsev.task_1_2_2;
 
 import java.util.Iterator;
 import java.util.ConcurrentModificationException;
@@ -9,7 +9,6 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
 
     private static final int DEFAULT_CAPACITY = 16;
     private static final double LOAD_FACTOR = 0.75;
-
     private Entry<K, V>[] table;
     private int size;
     private int modCount;
@@ -33,7 +32,6 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
 
         int index = hash(key);
         Entry<K, V> current = table[index];
-
         while (current != null) {
             if (Objects.equals(current.getKey(), key)) {
                 current.setValue(value);
@@ -52,7 +50,6 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
     public void update(K key, V value) {
         int index = hash(key);
         Entry<K, V> current = table[index];
-
         while (current != null) {
             if (Objects.equals(current.getKey(), key)) {
                 current.setValue(value);
@@ -65,7 +62,6 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
     public V get(K key) {
         int index = hash(key);
         Entry<K, V> current = table[index];
-
         while (current != null) {
             if (Objects.equals(current.getKey(), key)) {
                 return current.getValue();
@@ -79,7 +75,6 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
         int index = hash(key);
         Entry<K, V> current = table[index];
         Entry<K, V> prev = null;
-
         while (current != null) {
             if (Objects.equals(current.getKey(), key)) {
                 if (prev == null) {
@@ -106,9 +101,6 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
         Entry<K, V>[] oldTable = table;
         table = (Entry<K, V>[]) new Entry[oldTable.length * 2];
         size = 0;
-        //modCount не сбрасываем, так как resize - это тоже модификация
-        //но внутри put он и так увеличится, так что можно оставить как есть
-
         for (Entry<K, V> head : oldTable) {
             while (head != null) {
                 put(head.getKey(), head.getValue());
@@ -123,19 +115,16 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
     }
 
     @Override
-    @SuppressWarnings("unchecked") //Подавляем предупреждение о непроверяемом приведении типов
+    @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HashTable<K, V> that = (HashTable<K, V>) o;
-
         if (this.size != that.size) return false;
-
         for (Entry<K, V> entry : this) {
             K key = entry.getKey();
             V value = entry.getValue();
-            Object thatValue = that.get(key);
-
+            V thatValue = that.get(key);
             if (!Objects.equals(value, thatValue)) {
                 return false;
             }
@@ -144,6 +133,15 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        for (Entry<K, V> entry : this) {
+            result += Objects.hash(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 
     @Override
@@ -185,7 +183,6 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
             if (currentEntry != null) {
                 currentBucketIndex++;
             }
-
             while (currentBucketIndex < table.length) {
                 if (table[currentBucketIndex] != null) {
                     currentEntry = table[currentBucketIndex];
@@ -209,7 +206,6 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-
             lastReturned = currentEntry;
             itemsIterated++;
             prepareNext();
@@ -217,4 +213,3 @@ public class HashTable<K, V> implements Iterable<Entry<K, V>> {
         }
     }
 }
-
