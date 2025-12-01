@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"ru.nsu.maltsev.Task_1_2_2","l":"Entry"},{"p":"ru.nsu.maltsev.Task_1_2_2","l":"HashTable"},{"p":"ru.nsu.maltsev.Task_1_2_2","l":"Main"}];updateSearchResults();
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"ru.nsu.maltsev.task_1_2_2","l":"Entry"},{"p":"ru.nsu.maltsev.task_1_2_2","l":"HashTable"},{"p":"ru.nsu.maltsev.task_1_2_2","l":"Main"}];updateSearchResults();
