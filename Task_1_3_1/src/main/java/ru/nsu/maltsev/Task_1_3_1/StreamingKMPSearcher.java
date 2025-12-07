@@ -1,36 +1,95 @@
 package ru.nsu.maltsev.Task_1_3_1;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * КМП-поиск с потоковым чтением файла (для файлов больше RAM)
+ * КМП-поиск с потоковым чтением файла (для файлов больше RAM).
  */
 public class StreamingKMPSearcher {
 
     private static final int BUFFER_SIZE = 8192; // 8KB буфер
 
     /**
+     * Потоковый поиск подстроки в файле с поддержкой полных Unicode символов (включая суррогатные пары).
+     * Читает данные из Reader блоками.
+     *
+     * @param reader  читатель данных (файл, строка и т.д.)
+     * @param pattern искомая подстрока
+     * @return список индексов начала каждого вхождения (считая по символам Unicode/code points)
+     * @throws IOException если возникла ошибка при чтении
+     */
+    public static List<Long> searchInStream(BufferedReader reader, String pattern) throws IOException {
+        List<Long> results = new ArrayList<>();
+
+        if (pattern == null || pattern.isEmpty()) {
+            return results;
+        }
+
+        // Преобразуем паттерн в кодовые точки (code points)
+        int[] patternCodePoints = pattern.codePoints().toArray();
+        int[] pi = buildPrefixFunction(patternCodePoints);
+        int m = patternCodePoints.length;
+
+        long globalCodePointIndex = 0; // Глобальная позиция в Code Points
+        int j = 0; // Количество совпавших символов образца
+
+        int charVal;
+        while ((charVal = reader.read()) != -1) {
+            int currentCodePoint = charVal;
+
+            // Если это высокий суррогат, нужно прочитать следующий char (низкий суррогат)
+            // чтобы получить полный code point
+            if (Character.isHighSurrogate((char) charVal)) {
+                int nextCharVal = reader.read();
+                if (nextCharVal != -1) {
+                    currentCodePoint = Character.toCodePoint((char) charVal, (char) nextCharVal);
+                }
+            }
+
+            // КМП логика для code points
+            while (j > 0 && currentCodePoint != patternCodePoints[j]) {
+                j = pi[j - 1];
+            }
+
+            if (currentCodePoint == patternCodePoints[j]) {
+                j++;
+            }
+
+            if (j == m) {
+                // Индекс начала вхождения (в code points)
+                results.add(globalCodePointIndex - m + 1);
+                j = pi[j - 1];
+            }
+
+            // Увеличиваем индекс на 1 для каждого полного Unicode символа (code point)
+            globalCodePointIndex++;
+        }
+
+        return results;
+    }
+
+    /**
      * Построение префикс-функции для алгоритма КМП.
      *
-     * @param pattern строка-образец для построения префикс-функции
+     * @param patternCodePoints массив кодовых точек образца
      * @return массив значений префикс-функции
      */
-    private static int[] buildPrefixFunction(String pattern) {
-        int m = pattern.length();
+    private static int[] buildPrefixFunction(int[] patternCodePoints) {
+        int m = patternCodePoints.length;
         int[] pi = new int[m];
         pi[0] = 0;
 
         for (int i = 1; i < m; i++) {
             int j = pi[i - 1];
 
-            while (j > 0 && pattern.charAt(i) != pattern.charAt(j)) {
+            while (j > 0 && patternCodePoints[i] != patternCodePoints[j]) {
                 j = pi[j - 1];
             }
 
-            if (pattern.charAt(i) == pattern.charAt(j)) {
+            if (patternCodePoints[i] == patternCodePoints[j]) {
                 j++;
             }
 
@@ -39,86 +98,4 @@ public class StreamingKMPSearcher {
 
         return pi;
     }
-
-    /**
-     * Потоковый поиск подстроки в файле.
-     * Читает файл блоками, не загружая весь в память.
-     *
-     * @param fileName имя файла для поиска
-     * @param pattern искомая подстрока
-     * @return список индексов начала каждого вхождения (Long для больших файлов)
-     * @throws IOException если возникла ошибка при чтении файла
-     */
-    public static List<Long> searchInFile(String fileName, String pattern) throws IOException {
-        List<Long> results = new ArrayList<>();
-
-        if (pattern.isEmpty()) {
-            return results;
-        }
-
-        int[] pi = buildPrefixFunction(pattern);
-        int m = pattern.length();
-
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(fileName), StandardCharsets.UTF_8),
-                BUFFER_SIZE)) {
-
-            long globalPosition = 0;
-            int j = 0;
-
-            char[] buffer = new char[BUFFER_SIZE];
-            int charsRead;
-
-            while ((charsRead = reader.read(buffer, 0, BUFFER_SIZE)) != -1) {
-
-                for (int i = 0; i < charsRead; i++) {
-                    char currentChar = buffer[i];
-
-                    while (j > 0 && currentChar != pattern.charAt(j)) {
-                        j = pi[j - 1];
-                    }
-
-                    if (currentChar == pattern.charAt(j)) {
-                        j++;
-                    }
-
-                    if (j == m) {
-                        long matchIndex = globalPosition + i - m + 1;
-                        results.add(matchIndex);
-
-                        j = pi[j - 1];
-                    }
-                }
-                globalPosition += charsRead;
-            }
-        }
-
-        return results;
-    }
-
-    /**
-     * Вспомогательный метод для возврата List&lt;Integer&gt; (для совместимости).
-     * Используйте searchInFile() для очень больших файлов.
-     *
-     * @param fileName имя файла для поиска
-     * @param pattern искомая подстрока
-     * @return список индексов начала каждого вхождения (Integer)
-     * @throws IOException если возникла ошибка при чтении файла
-     */
-    public static List<Integer> searchInFileAsInt(String fileName, String pattern) throws IOException {
-        List<Long> longResults = searchInFile(fileName, pattern);
-        List<Integer> results = new ArrayList<>();
-
-        for (Long index : longResults) {
-            if (index <= Integer.MAX_VALUE) {
-                results.add(index.intValue());
-            } else {
-                System.err.println("Предупреждение: индекс " + index +
-                        " слишком большой для int, используйте searchInFile()");
-            }
-        }
-
-        return results;
-    }
 }
-

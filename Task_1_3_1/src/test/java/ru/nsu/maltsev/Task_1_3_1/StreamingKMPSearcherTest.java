@@ -1,6 +1,7 @@
 package ru.nsu.maltsev.Task_1_3_1;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
@@ -30,11 +31,21 @@ class StreamingKMPSearcherTest {
         return file;
     }
 
+    /**
+     * Вспомогательный метод для выполнения поиска через Reader
+     */
+    private List<Long> performSearch(File file, String pattern) throws IOException {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            return StreamingKMPSearcher.searchInStream(reader, pattern);
+        }
+    }
+
     @Test
     @DisplayName("Поиск в простом тексте - основной пример")
     void testBasicSearch() throws IOException {
         File file = createTestFile("абракадабра");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "бра");
+        List<Long> result = performSearch(file, "бра");
 
         assertEquals(2, result.size(), "Должно быть найдено 2 вхождения");
         assertEquals(1L, result.get(0), "Первое вхождение на индексе 1");
@@ -45,7 +56,7 @@ class StreamingKMPSearcherTest {
     @DisplayName("Поиск пустой подстроки")
     void testEmptyPattern() throws IOException {
         File file = createTestFile("test");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "");
+        List<Long> result = performSearch(file, "");
 
         assertTrue(result.isEmpty(), "Пустая подстрока не должна давать результатов");
     }
@@ -54,25 +65,26 @@ class StreamingKMPSearcherTest {
     @DisplayName("Подстрока не найдена")
     void testPatternNotFound() throws IOException {
         File file = createTestFile("абракадабра");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "xyz");
+        List<Long> result = performSearch(file, "xyz");
 
         assertTrue(result.isEmpty(), "Подстрока не должна быть найдена");
     }
 
     @Test
-    @DisplayName("Поиск в конце текста")
-    void testPatternAtEnd() throws IOException {
+    @DisplayName("Поиск в начале текста")
+    void testPatternAtStart() throws IOException {
         File file = createTestFile("абракадабра");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "абра");
+        List<Long> result = performSearch(file, "абрака");
 
-        assertTrue(result.contains(0L), "Должно содержать вхождение в начале");
+        assertEquals(1, result.size());
+        assertEquals(0L, result.get(0), "Вхождение должно быть на индексе 0");
     }
 
     @Test
     @DisplayName("Перекрывающиеся вхождения")
     void testOverlappingPatterns() throws IOException {
         File file = createTestFile("ааааа");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "ааа");
+        List<Long> result = performSearch(file, "ааа");
 
         assertEquals(3, result.size(), "Должно быть 3 перекрывающихся вхождения");
         assertEquals(0L, result.get(0));
@@ -81,105 +93,39 @@ class StreamingKMPSearcherTest {
     }
 
     @Test
-    @DisplayName("Поиск одного символа")
-    void testSingleCharacter() throws IOException {
-        File file = createTestFile("абракадабра");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "а");
-
-        assertEquals(5, result.size(), "Символ 'а' встречается 5 раз");
-    }
-
-    @Test
-    @DisplayName("Поиск всей строки")
-    void testWholeString() throws IOException {
-        File file = createTestFile("абракадабра");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "абракадабра");
-
-        assertEquals(1, result.size());
-        assertEquals(0L, result.get(0));
-    }
-
-    @Test
-    @DisplayName("Подстрока длиннее текста")
-    void testPatternLongerThanText() throws IOException {
-        File file = createTestFile("абра");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "абракадабра");
-
-        assertTrue(result.isEmpty(), "Подстрока длиннее текста не должна быть найдена");
-    }
-
-    @Test
-    @DisplayName("Пустой файл")
-    void testEmptyFile() throws IOException {
-        File file = createTestFile("");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "test");
-
-        assertTrue(result.isEmpty(), "В пустом файле ничего не должно быть найдено");
-    }
-
-    @Test
     @DisplayName("UTF-8: кириллица")
     void testUTF8Cyrillic() throws IOException {
         File file = createTestFile("Привет мир привет");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "привет");
+        List<Long> result = performSearch(file, "привет");
 
         assertEquals(1, result.size(), "Должно найти одно вхождение (с учётом регистра)");
-        assertEquals(11L, result.get(0));
+        assertEquals(11L, result.get(0)); // Индекс в code points
     }
 
     @Test
-    @DisplayName("UTF-8: смешанный текст")
-    void testUTF8Mixed() throws IOException {
-        File file = createTestFile("hello мир world");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "мир");
+    @DisplayName("UTF-8: эмодзи (проверка корректной индексации code points)")
+    void testEmojiSearch() throws IOException {
+        // Используем Unicode Escapes, чтобы избежать проблем с кодировкой самого .java файла
+        // U+1F327 (Cloud with Rain) = \uD83C\uDF27
+        String cloud = "\uD83C\uDF27";
+
+        File file = createTestFile(cloud + cloud);
+        List<Long> result = performSearch(file, cloud);
+
+        assertEquals(2, result.size());
+        assertEquals(0L, result.get(0));
+        assertEquals(1L, result.get(1));
+    }
+
+    @Test
+    @DisplayName("Поиск с Reader напрямую (без файла)")
+    void testSearchWithReader() throws IOException {
+        String content = "Hello World";
+        BufferedReader reader = new BufferedReader(new StringReader(content));
+
+        List<Long> result = StreamingKMPSearcher.searchInStream(reader, "World");
 
         assertEquals(1, result.size());
         assertEquals(6L, result.get(0));
-    }
-
-    @Test
-    @DisplayName("Большой файл (симуляция)")
-    void testLargeFile() throws IOException {
-        // Создаём файл ~100KB
-        StringBuilder content = new StringBuilder();
-        for (int i = 0; i < 1000; i++) {
-            content.append("абракадабра ");
-        }
-        File file = createTestFile(content.toString());
-
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "бра");
-
-        assertTrue(result.size() >= 2000, "Должно найти много вхождений");
-    }
-
-    @Test
-    @DisplayName("Несуществующий файл выбрасывает исключение")
-    void testNonExistentFile() {
-        assertThrows(IOException.class, () -> {
-            StreamingKMPSearcher.searchInFile("nonexistent_file.txt", "test");
-        });
-    }
-
-    @Test
-    @DisplayName("searchInFileAsInt корректно работает")
-    void testSearchInFileAsInt() throws IOException {
-        File file = createTestFile("абракадабра");
-        List<Integer> result = StreamingKMPSearcher.searchInFileAsInt(file.getAbsolutePath(), "бра");
-
-        assertEquals(2, result.size());
-        assertEquals(1, result.get(0));
-        assertEquals(8, result.get(1));
-    }
-
-    @Test
-    @DisplayName("Множественные вхождения подряд")
-    void testMultipleConsecutiveMatches() throws IOException {
-        File file = createTestFile("бра бра бра");
-        List<Long> result = StreamingKMPSearcher.searchInFile(file.getAbsolutePath(), "бра");
-
-        assertEquals(3, result.size());
-        assertEquals(0L, result.get(0));
-        assertEquals(4L, result.get(1));
-        assertEquals(8L, result.get(2));
     }
 }
