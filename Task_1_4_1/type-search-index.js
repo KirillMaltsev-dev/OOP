@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"ru.nsu.maltsev.task_1_4_1","l":"AssessmentType"},{"p":"ru.nsu.maltsev.task_1_4_1","l":"Grade"},{"p":"ru.nsu.maltsev.task_1_4_1","l":"StudentGradeBook"},{"p":"ru.nsu.maltsev.task_1_4_1","l":"StudentGradeBookDemo"},{"p":"ru.nsu.maltsev.task_1_4_1","l":"TuitionForm"}];updateSearchResults();
