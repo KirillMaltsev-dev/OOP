@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
 }
 
 group = 'ru.nsu.maltsev.task_1_4_1'
@@ -17,4 +18,20 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+
+// Исключение классов из отчёта о покрытии
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/StudentGradeBookDemo.class',           // исключить Main
+                    '**/StudentGradeBookDemo$*.class',         // исключить внутренние классы Main
+            ])
+        }))
+    }
 }
