@@ -1,0 +1,15 @@
+Method,Threads,Time_ms,Speedup
+Sequential,1,5.14,1.00
+Parallel_Thread,1,6.05,0.85
+Parallel_Thread,2,3.68,1.40
+Parallel_Thread,3,3.09,1.66
+Parallel_Thread,4,3.10,1.66
+Parallel_Thread,5,2.62,1.96
+Parallel_Thread,6,2.58,1.99
+Parallel_Thread,7,2.31,2.22
+Parallel_Thread,8,2.19,2.35
+Parallel_Thread,9,2.22,2.32
+Parallel_Thread,10,1.84,2.79
+Parallel_Thread,11,1.91,2.69
+Parallel_Thread,12,1.91,2.69
+ParallelStream,12,1.32,3.90

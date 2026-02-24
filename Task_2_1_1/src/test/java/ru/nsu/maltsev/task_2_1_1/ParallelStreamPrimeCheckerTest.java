@@ -1,7 +1,9 @@
 package ru.nsu.maltsev.task_2_1_1;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ParallelStreamPrimeCheckerTest {
 
