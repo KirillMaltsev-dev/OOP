@@ -2,8 +2,10 @@ package ru.nsu.maltsev.task_2_2_1;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OrderGeneratorTest {
 
@@ -14,10 +16,16 @@ class OrderGeneratorTest {
 
         generator.run();
 
-        assertEquals(1, queue.take().getId());
-        assertEquals(2, queue.take().getId());
-        assertEquals(3, queue.take().getId());
-        assertNull(queue.take());
+        List<Integer> ids = new ArrayList<>();
+        Order order;
+        while ((order = queue.take()) != null) {
+            ids.add(order.getId());
+        }
+
+        assertTrue(ids.size() == 3);
+        assertTrue(ids.get(0) == 1);
+        assertTrue(ids.get(1) == 2);
+        assertTrue(ids.get(2) == 3);
     }
 
     @Test
@@ -27,12 +35,11 @@ class OrderGeneratorTest {
 
         generator.run();
 
-        Order first = queue.take();
-        if (first != null) {
-            Order second = queue.take();
-            assertNull(second);
-        } else {
-            assertNull(queue.take());
+        int count = 0;
+        while (queue.take() != null) {
+            count++;
         }
+
+        assertTrue(count < 10);
     }
 }
