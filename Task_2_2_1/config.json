@@ -1,0 +1,9 @@
+{
+  "warehouseCapacity": 3,
+  "workDurationMs": 5000,
+  "orderIntervalMs": 300,
+  "deliveryTimeMs": 1000,
+  "ordersCount": 8,
+  "bakers": [700, 1200],
+  "couriers": [2, 1]
+}
