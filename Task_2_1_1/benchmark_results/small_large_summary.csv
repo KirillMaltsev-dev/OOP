@@ -1,0 +1,7 @@
+Algorithm;Avg_ms;Min_ms;Max_ms;CI90_ms;Speedup
+Sequential;1,631;1,572;1,775;0,082;1
+Threaded 1;1,994;1,934;2,07;0,047;0,818
+Threaded 2;1,547;1,198;2,094;0,365;1,054
+Threaded 4;1,245;1,045;1,318;0,109;1,31
+Threaded 8;2,191;1,551;3,245;0,696;0,744
+Parallel Stream;0,603;0,496;0,762;0,104;2,704

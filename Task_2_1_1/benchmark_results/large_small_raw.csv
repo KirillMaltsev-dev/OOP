@@ -1,0 +1,31 @@
+Scenario,Algorithm,Run,Time_ms
+large_small,Sequential,1,1.208
+large_small,Sequential,2,1.260
+large_small,Sequential,3,1.332
+large_small,Sequential,4,1.331
+large_small,Sequential,5,1.238
+large_small,Threaded 1,1,1.747
+large_small,Threaded 1,2,1.625
+large_small,Threaded 1,3,1.500
+large_small,Threaded 1,4,1.594
+large_small,Threaded 1,5,1.758
+large_small,Threaded 2,1,1.459
+large_small,Threaded 2,2,1.505
+large_small,Threaded 2,3,1.629
+large_small,Threaded 2,4,1.430
+large_small,Threaded 2,5,1.435
+large_small,Threaded 4,1,1.591
+large_small,Threaded 4,2,1.282
+large_small,Threaded 4,3,1.632
+large_small,Threaded 4,4,1.224
+large_small,Threaded 4,5,1.161
+large_small,Threaded 8,1,2.023
+large_small,Threaded 8,2,1.624
+large_small,Threaded 8,3,1.976
+large_small,Threaded 8,4,1.755
+large_small,Threaded 8,5,1.729
+large_small,Parallel Stream,1,1.285
+large_small,Parallel Stream,2,0.851
+large_small,Parallel Stream,3,1.053
+large_small,Parallel Stream,4,0.871
+large_small,Parallel Stream,5,0.713

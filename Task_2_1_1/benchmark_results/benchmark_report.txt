@@ -1,0 +1,45 @@
+Task_2_1_1 benchmark report
+Warmup runs: 2
+Measure runs: 5
+Threaded configs: [1, 2, 4, 8]
+ParallelStream parallelism: 8
+
+=== Correctness tests ===
+Test 1 expected true  -> true
+Test 2 expected false -> true
+
+=== small_small ===
+Array size: 300
+Sequential       avg =    0.027 ms | min =    0.026 ms | max =    0.030 ms | ci90 =    0.002 ms | speedup =  1.000
+Threaded 1       avg =    0.437 ms | min =    0.372 ms | max =    0.504 ms | ci90 =    0.051 ms | speedup =  0.063
+Threaded 2       avg =    0.593 ms | min =    0.502 ms | max =    0.785 ms | ci90 =    0.111 ms | speedup =  0.046
+Threaded 4       avg =    0.855 ms | min =    0.742 ms | max =    1.070 ms | ci90 =    0.121 ms | speedup =  0.032
+Threaded 8       avg =    1.381 ms | min =    1.136 ms | max =    1.822 ms | ci90 =    0.252 ms | speedup =  0.020
+Parallel Stream  avg =    0.427 ms | min =    0.285 ms | max =    0.562 ms | ci90 =    0.121 ms | speedup =  0.064
+
+=== large_small ===
+Array size: 5000
+Sequential       avg =    1.274 ms | min =    1.208 ms | max =    1.332 ms | ci90 =    0.053 ms | speedup =  1.000
+Threaded 1       avg =    1.645 ms | min =    1.500 ms | max =    1.758 ms | ci90 =    0.103 ms | speedup =  0.774
+Threaded 2       avg =    1.492 ms | min =    1.430 ms | max =    1.629 ms | ci90 =    0.079 ms | speedup =  0.854
+Threaded 4       avg =    1.378 ms | min =    1.161 ms | max =    1.632 ms | ci90 =    0.208 ms | speedup =  0.924
+Threaded 8       avg =    1.821 ms | min =    1.624 ms | max =    2.023 ms | ci90 =    0.163 ms | speedup =  0.699
+Parallel Stream  avg =    0.955 ms | min =    0.713 ms | max =    1.285 ms | ci90 =    0.211 ms | speedup =  1.334
+
+=== small_large ===
+Array size: 300
+Sequential       avg =    1.631 ms | min =    1.572 ms | max =    1.775 ms | ci90 =    0.082 ms | speedup =  1.000
+Threaded 1       avg =    1.994 ms | min =    1.934 ms | max =    2.070 ms | ci90 =    0.047 ms | speedup =  0.818
+Threaded 2       avg =    1.547 ms | min =    1.198 ms | max =    2.094 ms | ci90 =    0.365 ms | speedup =  1.054
+Threaded 4       avg =    1.245 ms | min =    1.045 ms | max =    1.318 ms | ci90 =    0.109 ms | speedup =  1.310
+Threaded 8       avg =    2.191 ms | min =    1.551 ms | max =    3.245 ms | ci90 =    0.696 ms | speedup =  0.744
+Parallel Stream  avg =    0.603 ms | min =    0.496 ms | max =    0.762 ms | ci90 =    0.104 ms | speedup =  2.704
+
+=== large_large ===
+Array size: 1500
+Sequential       avg =    9.529 ms | min =    7.652 ms | max =   16.369 ms | ci90 =    3.648 ms | speedup =  1.000
+Threaded 1       avg =   16.022 ms | min =    8.498 ms | max =   21.876 ms | ci90 =    4.950 ms | speedup =  0.595
+Threaded 2       avg =   11.184 ms | min =    6.368 ms | max =   21.275 ms | ci90 =    5.595 ms | speedup =  0.852
+Threaded 4       avg =   32.649 ms | min =    4.886 ms | max =  107.602 ms | ci90 =   41.513 ms | speedup =  0.292
+Threaded 8       avg =   17.428 ms | min =    7.899 ms | max =   50.655 ms | ci90 =   17.727 ms | speedup =  0.547
+Parallel Stream  avg =    5.097 ms | min =    2.952 ms | max =    8.881 ms | ci90 =    2.237 ms | speedup =  1.870
