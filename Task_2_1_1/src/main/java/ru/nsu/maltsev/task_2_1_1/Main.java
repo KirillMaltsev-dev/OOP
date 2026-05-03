@@ -1,203 +1,297 @@
 package ru.nsu.maltsev.task_2_1_1;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
-/**
- * Main: Главный класс для тестирования и сравнения методов
- * Вывод результатов производится в файлы performance_results.csv и report.txt
- */
 public class Main {
 
-    private static final String CSV_FILE = "performance_results.csv";
-    private static final String REPORT_FILE = "analysis_report.txt";
+    private static final int[] THREAD_CONFIGS = {1, 2, 4, 8};
+    private static final int PARALLEL_STREAM_PARALLELISM = 8;
+    private static final int WARMUP_RUNS = 2;
+    private static final int MEASURE_RUNS = 5;
+    private static final double T_CRITICAL_90_DF4 = 2.132;
 
-    /**
-     * Метод для измерения времени выполнения
-     */
-    private static long measureTime(Runnable task) {
+    private static final Path RESULTS_DIR = Path.of("benchmark_results");
+    private static final Path DIAGRAM_DIR = Path.of("benchmark_diagram");
+    private static final Path REPORT_FILE = RESULTS_DIR.resolve("benchmark_report.txt");
+
+    public static void main(String[] args) {
+        Locale.setDefault(Locale.US);
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(PARALLEL_STREAM_PARALLELISM));
+
+        try {
+            Files.createDirectories(RESULTS_DIR);
+            Files.createDirectories(DIAGRAM_DIR);
+
+            try (PrintWriter reportWriter = new PrintWriter(Files.newBufferedWriter(REPORT_FILE, StandardCharsets.UTF_8))) {
+                writeReportHeader(reportWriter);
+                runCorrectnessTests(reportWriter);
+
+                Map<String, int[]> scenarios = prepareScenarios();
+
+                for (Map.Entry<String, int[]> entry : scenarios.entrySet()) {
+                    benchmarkScenario(entry.getKey(), entry.getValue(), reportWriter);
+                }
+            }
+
+            System.out.println("Benchmark completed");
+            System.out.println("Results directory: " + RESULTS_DIR.toAbsolutePath());
+            System.out.println("Diagram directory: " + DIAGRAM_DIR.toAbsolutePath());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write benchmark files", e);
+        }
+    }
+
+    private static Map<String, int[]> prepareScenarios() {
+        Map<String, int[]> scenarios = new LinkedHashMap<>();
+        scenarios.put("small_small", generateSmallPrimes(300));
+        scenarios.put("large_small", generateSmallPrimes(5000));
+        scenarios.put("small_large", generateLargePrimes(300));
+        scenarios.put("large_large", generateLargePrimes(1500));
+        return scenarios;
+    }
+
+    private static void benchmarkScenario(String scenarioName, int[] data, PrintWriter reportWriter) throws IOException {
+        Path rawFile = RESULTS_DIR.resolve(scenarioName + "_raw.csv");
+        Path summaryFile = RESULTS_DIR.resolve(scenarioName + "_summary.csv");
+
+        warmUp(data);
+
+        try (PrintWriter rawWriter = new PrintWriter(Files.newBufferedWriter(rawFile, StandardCharsets.UTF_8));
+             PrintWriter summaryWriter = new PrintWriter(Files.newBufferedWriter(summaryFile, StandardCharsets.UTF_8))) {
+
+            rawWriter.println("Scenario,Algorithm,Run,Time_ms");
+            summaryWriter.println("Algorithm,Avg_ms,Min_ms,Max_ms,CI90_ms,Speedup");
+
+            reportWriter.println();
+            reportWriter.println("=== " + scenarioName + " ===");
+            reportWriter.println("Array size: " + data.length);
+
+            BenchmarkStats seqStats = benchmarkAlgorithm(
+                    scenarioName,
+                    "Sequential",
+                    new SequentialPrimeChecker(),
+                    data,
+                    rawWriter
+            );
+            writeSummary(summaryWriter, seqStats, 1.0);
+            writeReport(reportWriter, seqStats, 1.0);
+
+            for (int threadCount : THREAD_CONFIGS) {
+                BenchmarkStats threadStats = benchmarkAlgorithm(
+                        scenarioName,
+                        "Threaded " + threadCount,
+                        new ParallelThreadPrimeChecker(threadCount),
+                        data,
+                        rawWriter
+                );
+                double speedup = seqStats.getAverageMs() / threadStats.getAverageMs();
+                writeSummary(summaryWriter, threadStats, speedup);
+                writeReport(reportWriter, threadStats, speedup);
+            }
+
+            BenchmarkStats streamStats = benchmarkAlgorithm(
+                    scenarioName,
+                    "Parallel Stream",
+                    new ParallelStreamPrimeChecker(),
+                    data,
+                    rawWriter
+            );
+            double streamSpeedup = seqStats.getAverageMs() / streamStats.getAverageMs();
+            writeSummary(summaryWriter, streamStats, streamSpeedup);
+            writeReport(reportWriter, streamStats, streamSpeedup);
+        }
+    }
+
+    private static BenchmarkStats benchmarkAlgorithm(
+            String scenarioName,
+            String algorithmName,
+            PrimeChecker checker,
+            int[] data,
+            PrintWriter rawWriter
+    ) {
+        double[] times = new double[MEASURE_RUNS];
+
+        for (int i = 0; i < MEASURE_RUNS; i++) {
+            times[i] = measureMillis(() -> checker.hasNonPrime(data));
+            rawWriter.printf(Locale.US, "%s,%s,%d,%.3f%n", scenarioName, algorithmName, i + 1, times[i]);
+        }
+
+        return calculateStats(algorithmName, times);
+    }
+
+    private static void warmUp(int[] data) {
+        PrimeChecker[] checkers = new PrimeChecker[]{
+                new SequentialPrimeChecker(),
+                new ParallelThreadPrimeChecker(1),
+                new ParallelThreadPrimeChecker(2),
+                new ParallelThreadPrimeChecker(4),
+                new ParallelThreadPrimeChecker(8),
+                new ParallelStreamPrimeChecker()
+        };
+
+        for (int i = 0; i < WARMUP_RUNS; i++) {
+            for (PrimeChecker checker : checkers) {
+                checker.hasNonPrime(data);
+            }
+        }
+    }
+
+    private static BenchmarkStats calculateStats(String algorithmName, double[] times) {
+        double sum = 0.0;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+
+        for (double time : times) {
+            sum += time;
+            min = Math.min(min, time);
+            max = Math.max(max, time);
+        }
+
+        double average = sum / times.length;
+        double varianceSum = 0.0;
+
+        for (double time : times) {
+            double diff = time - average;
+            varianceSum += diff * diff;
+        }
+
+        double std = times.length > 1 ? Math.sqrt(varianceSum / (times.length - 1)) : 0.0;
+        double ci90 = T_CRITICAL_90_DF4 * std / Math.sqrt(times.length);
+
+        return new BenchmarkStats(algorithmName, average, min, max, ci90);
+    }
+
+    private static double measureMillis(Runnable task) {
         long start = System.nanoTime();
         task.run();
         long end = System.nanoTime();
-        return end - start;
+        return (end - start) / 1_000_000.0;
     }
 
-    /**
-     * Генерация массива больших простых чисел для тестирования
-     */
-    private static int[] generateLargePrimes(int count) {
+    private static void writeSummary(PrintWriter summaryWriter, BenchmarkStats stats, double speedup) {
+        summaryWriter.printf(
+                Locale.US,
+                "%s,%.3f,%.3f,%.3f,%.3f,%.3f%n",
+                stats.getAlgorithmName(),
+                stats.getAverageMs(),
+                stats.getMinMs(),
+                stats.getMaxMs(),
+                stats.getCi90Ms(),
+                speedup
+        );
+    }
+
+    private static void writeReport(PrintWriter reportWriter, BenchmarkStats stats, double speedup) {
+        reportWriter.printf(
+                Locale.US,
+                "%-16s avg = %8.3f ms | min = %8.3f ms | max = %8.3f ms | ci90 = %8.3f ms | speedup = %6.3f%n",
+                stats.getAlgorithmName(),
+                stats.getAverageMs(),
+                stats.getMinMs(),
+                stats.getMaxMs(),
+                stats.getCi90Ms(),
+                speedup
+        );
+    }
+
+    private static void writeReportHeader(PrintWriter reportWriter) {
+        reportWriter.println("Task_2_1_1 benchmark report");
+        reportWriter.println("Warmup runs: " + WARMUP_RUNS);
+        reportWriter.println("Measure runs: " + MEASURE_RUNS);
+        reportWriter.println("Threaded configs: " + Arrays.toString(THREAD_CONFIGS));
+        reportWriter.println("ParallelStream parallelism: " + PARALLEL_STREAM_PARALLELISM);
+    }
+
+    private static void runCorrectnessTests(PrintWriter reportWriter) {
+        reportWriter.println();
+        reportWriter.println("=== Correctness tests ===");
+
+        int[] test1 = {6, 8, 7, 13, 5, 9, 4};
+        int[] test2 = {20319251, 6997901, 6997927, 6997937, 17858849, 6997967};
+
+        boolean seq1 = new SequentialPrimeChecker().hasNonPrime(test1);
+        boolean thr1 = new ParallelThreadPrimeChecker(4).hasNonPrime(test1);
+        boolean str1 = new ParallelStreamPrimeChecker().hasNonPrime(test1);
+
+        boolean seq2 = new SequentialPrimeChecker().hasNonPrime(test2);
+        boolean thr2 = new ParallelThreadPrimeChecker(4).hasNonPrime(test2);
+        boolean str2 = new ParallelStreamPrimeChecker().hasNonPrime(test2);
+
+        reportWriter.println("Test 1 expected true  -> " + (seq1 && thr1 && str1));
+        reportWriter.println("Test 2 expected false -> " + (!seq2 && !thr2 && !str2));
+    }
+
+    private static int[] generateSmallPrimes(int count) {
         int[] primes = new int[count];
-        int num = 10000000;
         int found = 0;
+        int number = 2;
 
         while (found < count) {
-            if (PrimeChecker.isPrime(num)) {
-                primes[found++] = num;
+            if (PrimeChecker.isPrime(number)) {
+                primes[found++] = number;
             }
-            num++;
+            number++;
         }
 
         return primes;
     }
 
-    /**
-     * Основной метод
-     */
-    public static void main(String[] args) {
-        Locale.setDefault(Locale.US);
+    private static int[] generateLargePrimes(int count) {
+        int[] primes = new int[count];
+        int found = 0;
+        int number = 10_000_000;
 
-        System.out.println("Запуск Task_2_1_1...");
-        System.out.println("Результаты будут сохранены в файлы:");
-        System.out.println("   1. " + CSV_FILE + " (данные для графика)");
-        System.out.println("   2. " + REPORT_FILE + " (подробный анализ)");
-
-        try (PrintWriter csvWriter = new PrintWriter(CSV_FILE, StandardCharsets.UTF_8.name());
-             PrintWriter reportWriter = new PrintWriter(REPORT_FILE, StandardCharsets.UTF_8.name())) {
-
-            csvWriter.println("Method,Threads,Time_ms,Speedup");
-
-            runCorrectnessTests(reportWriter);
-
-            System.out.println("\nГенерация тестовых данных (1000 больших простых чисел)...");
-            int[] largeTestSet = generateLargePrimes(1000);
-
-            int maxThreads = Runtime.getRuntime().availableProcessors();
-            reportWriter.printf("\n=== Конфигурация системы ===\n");
-            reportWriter.printf("Доступно ядер: %d\n", maxThreads);
-            reportWriter.printf("Размер тестового набора: %d чисел\n", largeTestSet.length);
-
-            // Прогрев
-            System.out.println("Прогрев JVM...");
-            warmUp(largeTestSet);
-
-            // 3. Измерение производительности
-            System.out.println("Измерение производительности...");
-
-            // --- Sequential ---
-            System.out.print("   • Sequential... ");
-            double seqTimeMs = testSequential(largeTestSet, csvWriter, reportWriter);
-            System.out.println("Готово (" + String.format("%.2f", seqTimeMs) + " мс)");
-
-            // --- Parallel Thread ---
-            System.out.print("   • Parallel Thread (1-" + maxThreads + " потоков)... ");
-            double[] parallelTimes = testParallelThread(largeTestSet, maxThreads, seqTimeMs, csvWriter, reportWriter);
-            System.out.println("Готово");
-
-            // --- Parallel Stream ---
-            System.out.print("   • Parallel Stream... ");
-            double streamTimeMs = testParallelStream(largeTestSet, maxThreads, seqTimeMs, csvWriter, reportWriter);
-            System.out.println("Готово (" + String.format("%.2f", streamTimeMs) + " мс)");
-
-            // 4. Анализ
-            performAnalysis(seqTimeMs, parallelTimes, streamTimeMs, maxThreads, reportWriter);
-
-            System.out.println("\nГотово! Файлы успешно созданы.");
-
-        } catch (IOException e) {
-            System.err.println("Ошибка при записи файлов: " + e.getMessage());
+        while (found < count) {
+            if (PrimeChecker.isPrime(number)) {
+                primes[found++] = number;
+            }
+            number++;
         }
+
+        return primes;
     }
 
-    private static void warmUp(int[] data) {
-        PrimeChecker seq = new SequentialPrimeChecker();
-        PrimeChecker par = new ParallelThreadPrimeChecker(4);
-        PrimeChecker str = new ParallelStreamPrimeChecker();
+    private static final class BenchmarkStats {
+        private final String algorithmName;
+        private final double averageMs;
+        private final double minMs;
+        private final double maxMs;
+        private final double ci90Ms;
 
-        for (int i = 0; i < 5; i++) {
-            seq.hasNonPrime(data);
-            par.hasNonPrime(data);
-            str.hasNonPrime(data);
+        private BenchmarkStats(String algorithmName, double averageMs, double minMs, double maxMs, double ci90Ms) {
+            this.algorithmName = algorithmName;
+            this.averageMs = averageMs;
+            this.minMs = minMs;
+            this.maxMs = maxMs;
+            this.ci90Ms = ci90Ms;
         }
-    }
 
-    private static double testSequential(int[] data, PrintWriter csv, PrintWriter report) {
-        PrimeChecker checker = new SequentialPrimeChecker();
-        long[] times = new long[10];
-        for (int i = 0; i < 10; i++) times[i] = measureTime(() -> checker.hasNonPrime(data));
-
-        double avgMs = Arrays.stream(times).sum() / times.length / 1_000_000.0;
-
-        // Запись в CSV
-        csv.printf(Locale.US, "Sequential,1,%.2f,1.00%n", avgMs);
-
-        // Запись в отчет
-        report.printf("\n=== 1. Sequential ===\n");
-        report.printf("Среднее время: %.2f мс\n", avgMs);
-
-        return avgMs;
-    }
-
-    private static double[] testParallelThread(int[] data, int maxThreads, double seqTimeMs, PrintWriter csv, PrintWriter report) {
-        double[] results = new double[maxThreads];
-        report.printf("\n=== 2. Parallel Thread ===\n");
-
-        for (int t = 1; t <= maxThreads; t++) {
-            PrimeChecker checker = new ParallelThreadPrimeChecker(t);
-            long[] times = new long[10];
-            for (int i = 0; i < 10; i++) times[i] = measureTime(() -> checker.hasNonPrime(data));
-
-            double avgMs = Arrays.stream(times).sum() / times.length / 1_000_000.0;
-            results[t-1] = avgMs;
-            double speedup = seqTimeMs / avgMs;
-
-            csv.printf(Locale.US, "Parallel_Thread,%d,%.2f,%.2f%n", t, avgMs, speedup);
-            report.printf("Потоков: %2d | Время: %6.2f мс | Ускорение: %5.2fx\n", t, avgMs, speedup);
+        public String getAlgorithmName() {
+            return algorithmName;
         }
-        return results;
-    }
 
-    private static double testParallelStream(int[] data, int maxThreads, double seqTimeMs, PrintWriter csv, PrintWriter report) {
-        PrimeChecker checker = new ParallelStreamPrimeChecker();
-        long[] times = new long[10];
-        for (int i = 0; i < 10; i++) times[i] = measureTime(() -> checker.hasNonPrime(data));
+        public double getAverageMs() {
+            return averageMs;
+        }
 
-        double avgMs = Arrays.stream(times).sum() / times.length / 1_000_000.0;
-        double speedup = seqTimeMs / avgMs;
+        public double getMinMs() {
+            return minMs;
+        }
 
-        csv.printf(Locale.US, "ParallelStream,%d,%.2f,%.2f%n", maxThreads, avgMs, speedup);
+        public double getMaxMs() {
+            return maxMs;
+        }
 
-        report.printf("\n=== 3. ParallelStream ===\n");
-        report.printf("Время: %.2f мс | Ускорение: %.2fx\n", avgMs, speedup);
-
-        return avgMs;
-    }
-
-    private static void performAnalysis(double seqTime, double[] parTimes, double streamTime, int threads, PrintWriter report) {
-        double bestTime = Math.min(Arrays.stream(parTimes).min().orElse(seqTime), streamTime);
-        double bestSpeedup = seqTime / bestTime;
-
-        double s = (1.0 / bestSpeedup - 1.0 / threads) / (1.0 - 1.0 / threads);
-
-        report.printf("\n=== Итоговый анализ ===\n");
-        report.printf("Лучшее время:     %.2f мс\n", bestTime);
-        report.printf("Макс. ускорение:  %.2fx\n", bestSpeedup);
-        report.printf("Доля посл. кода:  %.2f%% (по закону Амдала)\n", Math.max(0, s * 100));
-        report.printf("Теор. максимум:   %.2fx (при бесконечных ядрах)\n", s > 0 ? 1/s : 0);
-    }
-
-    private static void runCorrectnessTests(PrintWriter report) {
-        report.println("=== Тесты корректности ===");
-        int[] test1 = {6, 8, 7, 13, 5, 9, 4};
-        int[] test2 = {20319251, 6997901, 6997927};
-
-        boolean t1Seq = new SequentialPrimeChecker().hasNonPrime(test1);
-        boolean t1Par = new ParallelThreadPrimeChecker(4).hasNonPrime(test1);
-        boolean t1Str = new ParallelStreamPrimeChecker().hasNonPrime(test1);
-
-        report.printf("Тест 1 (ожидается true): Seq=%b, Par=%b, Stream=%b -> %s\n",
-                t1Seq, t1Par, t1Str, (t1Seq && t1Par && t1Str) ? "OK" : "FAIL");
-
-        boolean t2Seq = new SequentialPrimeChecker().hasNonPrime(test2);
-        boolean t2Par = new ParallelThreadPrimeChecker(4).hasNonPrime(test2);
-        boolean t2Str = new ParallelStreamPrimeChecker().hasNonPrime(test2);
-
-        report.printf("Тест 2 (ожидается false): Seq=%b, Par=%b, Stream=%b -> %s\n",
-                t2Seq, t2Par, t2Str, (!t2Seq && !t2Par && !t2Str) ? "OK" : "FAIL");
+        public double getCi90Ms() {
+            return ci90Ms;
+        }
     }
 }
