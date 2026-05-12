@@ -8,38 +8,104 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="root"
-            prefWidth="760"
-            prefHeight="700"
-            style="-fx-background-color: #171a21;"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="ru.nsu.maltsev.task_2_3_1.snake.controller.GameController">
+<StackPane fx:id="root"
+           prefWidth="760"
+           prefHeight="700"
+           style="-fx-background-color: linear-gradient(to bottom, #dff6ff, #bfe8ff);"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="ru.nsu.maltsev.task_2_3_1.snake.controller.GameController">
 
-    <top>
-        <VBox alignment="CENTER" spacing="6" style="-fx-padding: 14;">
+    <BorderPane fx:id="gamePane"
+                prefWidth="760"
+                prefHeight="700"
+                style="-fx-background-color: linear-gradient(to bottom, #dff6ff, #bfe8ff);">
+
+        <top>
+            <VBox alignment="CENTER" spacing="6" style="-fx-padding: 14;">
+                <Label text="Snake"
+                       style="-fx-font-size: 30px; -fx-text-fill: #24527a; -fx-font-weight: bold;" />
+                <Label fx:id="statusLabel"
+                       style="-fx-font-size: 15px; -fx-text-fill: #35627a;" />
+            </VBox>
+        </top>
+
+        <center>
+            <StackPane style="-fx-padding: 12;">
+                <StackPane style="-fx-background-color: rgba(255,255,255,0.55); -fx-background-radius: 20; -fx-padding: 14;">
+                    <Canvas fx:id="boardCanvas" width="600" height="600" />
+                </StackPane>
+            </StackPane>
+        </center>
+
+        <bottom>
+            <HBox alignment="CENTER" spacing="28" style="-fx-padding: 14;">
+                <Label fx:id="scoreLabel"
+                       style="-fx-font-size: 16px; -fx-text-fill: #24527a; -fx-font-weight: bold;" />
+                <Label fx:id="levelLabel"
+                       style="-fx-font-size: 16px; -fx-text-fill: #24527a; -fx-font-weight: bold;" />
+                <Button text="New game"
+                        onAction="#onRestartClicked"
+                        style="-fx-font-size: 14px; -fx-padding: 8 18; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-text-fill: #24527a; -fx-font-weight: bold;" />
+            </HBox>
+        </bottom>
+
+    </BorderPane>
+
+    <StackPane fx:id="startMenu"
+               prefWidth="760"
+               prefHeight="700"
+               style="-fx-background-image: url('/ru/nsu/maltsev/task_2_3_1/snake/images/menu-background.png'); -fx-background-size: cover; -fx-background-position: center;">
+
+        <VBox alignment="CENTER"
+              spacing="18"
+              maxWidth="460"
+              maxHeight="360"
+              style="-fx-background-color: rgba(255,255,255,0.78); -fx-background-radius: 28; -fx-padding: 42; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 24, 0, 0, 8);">
+
             <Label text="Snake"
-                   style="-fx-font-size: 28px; -fx-text-fill: white; -fx-font-weight: bold;" />
-            <Label fx:id="statusLabel"
-                   style="-fx-font-size: 15px; -fx-text-fill: #c9d1d9;" />
+                   style="-fx-font-size: 46px; -fx-text-fill: #24527a; -fx-font-weight: bold;" />
+
+            <Label text="Eat apples, grow longer and avoid obstacles"
+                   wrapText="true"
+                   style="-fx-font-size: 16px; -fx-text-fill: #35627a;" />
+
+            <Button text="Start game"
+                    onAction="#onStartClicked"
+                    style="-fx-font-size: 18px; -fx-padding: 12 34; -fx-background-color: #ff8ac8; -fx-background-radius: 18; -fx-text-fill: white; -fx-font-weight: bold;" />
+
+            <Label text="Controls: WASD or arrows"
+                   style="-fx-font-size: 14px; -fx-text-fill: #507080;" />
         </VBox>
-    </top>
+    </StackPane>
 
-    <center>
-        <StackPane style="-fx-padding: 12;">
-            <Canvas fx:id="boardCanvas" width="600" height="600" />
-        </StackPane>
-    </center>
+    <StackPane fx:id="gameOverMenu"
+               visible="false"
+               managed="false"
+               prefWidth="760"
+               prefHeight="700"
+               style="-fx-background-color: rgba(20, 35, 45, 0.45);">
 
-    <bottom>
-        <HBox alignment="CENTER" spacing="28" style="-fx-padding: 14;">
-            <Label fx:id="scoreLabel"
-                   style="-fx-font-size: 16px; -fx-text-fill: white;" />
-            <Label fx:id="levelLabel"
-                   style="-fx-font-size: 16px; -fx-text-fill: white;" />
-            <Button text="New game"
+        <VBox alignment="CENTER"
+              spacing="18"
+              maxWidth="460"
+              maxHeight="320"
+              style="-fx-background-color: rgba(255,255,255,0.88); -fx-background-radius: 28; -fx-padding: 42; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 24, 0, 0, 8);">
+
+            <Label fx:id="gameOverTitleLabel"
+                   text="Game over"
+                   style="-fx-font-size: 40px; -fx-text-fill: #24527a; -fx-font-weight: bold;" />
+
+            <Label fx:id="gameOverScoreLabel"
+                   text="Final score: 0"
+                   style="-fx-font-size: 20px; -fx-text-fill: #35627a; -fx-font-weight: bold;" />
+
+            <Button text="Play again"
                     onAction="#onRestartClicked"
-                    style="-fx-font-size: 14px; -fx-padding: 8 18;" />
-        </HBox>
-    </bottom>
+                    style="-fx-font-size: 18px; -fx-padding: 12 34; -fx-background-color: #ff8ac8; -fx-background-radius: 18; -fx-text-fill: white; -fx-font-weight: bold;" />
 
-</BorderPane>
+            <Label text="Press R or Enter to restart"
+                   style="-fx-font-size: 14px; -fx-text-fill: #507080;" />
+        </VBox>
+    </StackPane>
+
+</StackPane>

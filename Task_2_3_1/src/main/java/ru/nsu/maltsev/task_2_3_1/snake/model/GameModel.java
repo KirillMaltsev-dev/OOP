@@ -26,6 +26,7 @@ public class GameModel {
     private int level;
     private int tickMillis;
     private int growth;
+    private boolean victoryAchieved;
 
     public GameModel(GameConfig config) {
         this(config, new Random());
@@ -61,6 +62,7 @@ public class GameModel {
         level = 1;
         tickMillis = config.getInitialTickMillis();
         growth = 0;
+        victoryAchieved = false;
 
         generateObstacles();
         refillFood();
@@ -102,7 +104,7 @@ public class GameModel {
         updateLevel();
 
         if (snake.size() >= config.getWinLength()) {
-            status = GameStatus.WON;
+            victoryAchieved = true;
         }
     }
 
@@ -236,5 +238,9 @@ public class GameModel {
 
     public int getTickMillis() {
         return tickMillis;
+    }
+
+    public boolean isVictoryAchieved() {
+        return victoryAchieved;
     }
 }
