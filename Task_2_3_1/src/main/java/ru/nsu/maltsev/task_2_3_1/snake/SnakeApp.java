@@ -22,6 +22,13 @@ public class SnakeApp extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+        stage.setOnCloseRequest(event -> {
+            Object controller = loader.getController();
+
+            if (controller instanceof ru.nsu.maltsev.task_2_3_1.snake.controller.GameController) {
+                ((ru.nsu.maltsev.task_2_3_1.snake.controller.GameController) controller).shutdown();
+            }
+        });
 
         root.requestFocus();
     }

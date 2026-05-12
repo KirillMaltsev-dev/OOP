@@ -21,12 +21,14 @@ public class GameModel {
     private Direction direction;
     private Direction nextDirection;
     private GameStatus status;
+    private Position deathPosition;
 
     private int score;
     private int level;
     private int tickMillis;
     private int growth;
     private boolean victoryAchieved;
+    private boolean foodEatenOnLastStep;
 
     public GameModel(GameConfig config) {
         this(config, new Random());
@@ -57,6 +59,8 @@ public class GameModel {
         direction = Direction.RIGHT;
         nextDirection = Direction.RIGHT;
         status = GameStatus.RUNNING;
+        deathPosition = null;
+        foodEatenOnLastStep = false;
 
         score = 0;
         level = 1;
@@ -69,6 +73,7 @@ public class GameModel {
     }
 
     public void step() {
+        foodEatenOnLastStep = false;
         if (status != GameStatus.RUNNING) {
             return;
         }
@@ -80,6 +85,7 @@ public class GameModel {
         Food eatenFood = findFood(newHead);
 
         if (isCollision(newHead, eatenFood != null)) {
+            deathPosition = clampToBoard(newHead);
             status = GameStatus.LOST;
             return;
         }
@@ -91,6 +97,7 @@ public class GameModel {
             foods.remove(eatenFood);
             score += eatenFood.getType().getScore();
             growth += eatenFood.getType().getGrowth();
+            foodEatenOnLastStep = true;
             refillFood();
         }
 
@@ -242,5 +249,20 @@ public class GameModel {
 
     public boolean isVictoryAchieved() {
         return victoryAchieved;
+    }
+
+    private Position clampToBoard(Position position) {
+        int row = Math.max(0, Math.min(config.getRows() - 1, position.getRow()));
+        int column = Math.max(0, Math.min(config.getColumns() - 1, position.getColumn()));
+
+        return new Position(row, column);
+    }
+
+    public Position getDeathPosition() {
+        return deathPosition;
+    }
+
+    public boolean isFoodEatenOnLastStep() {
+        return foodEatenOnLastStep;
     }
 }

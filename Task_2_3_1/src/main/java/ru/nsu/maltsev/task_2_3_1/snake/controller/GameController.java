@@ -20,6 +20,7 @@ import ru.nsu.maltsev.task_2_3_1.snake.model.GameConfig;
 import ru.nsu.maltsev.task_2_3_1.snake.model.GameModel;
 import ru.nsu.maltsev.task_2_3_1.snake.model.GameStatus;
 import ru.nsu.maltsev.task_2_3_1.snake.model.Position;
+import ru.nsu.maltsev.task_2_3_1.snake.sound.AudioManager;
 
 public class GameController {
     @FXML
@@ -56,6 +57,12 @@ public class GameController {
     private Timeline timeline;
     private int currentTickMillis;
 
+    private final AudioManager audioManager = new AudioManager();
+
+    private Timeline explosionTimeline;
+    private Position explosionPosition;
+    private int explosionFrame;
+
     @FXML
     private void initialize() {
         model = new GameModel(GameConfig.defaultConfig());
@@ -67,12 +74,14 @@ public class GameController {
         setMenuVisible(gameOverMenu, false);
 
         render();
+        audioManager.playMenuMusic();
 
         Platform.runLater(root::requestFocus);
     }
 
     @FXML
     private void onStartClicked() {
+        stopExplosionAnimation();
         model.reset();
 
         setMenuVisible(startMenu, false);
@@ -80,6 +89,7 @@ public class GameController {
 
         render();
         startGameLoop();
+        audioManager.playGameMusic();
 
         root.requestFocus();
     }
@@ -156,11 +166,16 @@ public class GameController {
 
     private void onTick() {
         model.step();
+
+        if (model.isFoodEatenOnLastStep()) {
+            audioManager.playEatSound();
+        }
+
         render();
 
         if (model.getStatus() == GameStatus.LOST) {
             stopGameLoop();
-            showGameOverMenu();
+            startDeathSequence();
             return;
         }
 
@@ -172,8 +187,10 @@ public class GameController {
     private void showGameOverMenu() {
         if (model.isVictoryAchieved()) {
             gameOverTitleLabel.setText("Victory!");
+            audioManager.playWinMusic();
         } else {
             gameOverTitleLabel.setText("Game over");
+            audioManager.playLoseMusic();
         }
 
         gameOverScoreLabel.setText("Final score: " + model.getScore());
@@ -343,5 +360,86 @@ public class GameController {
         } else {
             statusLabel.setText("Use WASD or arrows to move");
         }
+    }
+
+    private void startDeathSequence() {
+        audioManager.stopMusic();
+        audioManager.playDeathSound();
+
+        explosionPosition = model.getDeathPosition();
+        explosionFrame = 0;
+
+        explosionTimeline = new Timeline(new KeyFrame(Duration.millis(45), event -> {
+            render();
+            drawExplosionFrame();
+
+            explosionFrame++;
+
+            if (explosionFrame > 10) {
+                stopExplosionAnimation();
+                showGameOverMenu();
+            }
+        }));
+
+        explosionTimeline.setCycleCount(Animation.INDEFINITE);
+        explosionTimeline.play();
+    }
+
+    private void stopExplosionAnimation() {
+        if (explosionTimeline != null) {
+            explosionTimeline.stop();
+            explosionTimeline = null;
+        }
+
+        explosionPosition = null;
+        explosionFrame = 0;
+    }
+
+    private void drawExplosionFrame() {
+        if (explosionPosition == null) {
+            return;
+        }
+
+        GraphicsContext gc = boardCanvas.getGraphicsContext2D();
+
+        int rows = model.getConfig().getRows();
+        int columns = model.getConfig().getColumns();
+
+        double cellWidth = boardCanvas.getWidth() / columns;
+        double cellHeight = boardCanvas.getHeight() / rows;
+
+        double centerX = explosionPosition.getColumn() * cellWidth + cellWidth / 2.0;
+        double centerY = explosionPosition.getRow() * cellHeight + cellHeight / 2.0;
+
+        double progress = explosionFrame / 10.0;
+        double radius = cellWidth * (0.5 + progress * 2.4);
+
+        gc.setFill(Color.rgb(255, 210, 70, 1.0 - progress * 0.7));
+        gc.fillOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+        gc.setFill(Color.rgb(255, 90, 40, 1.0 - progress * 0.6));
+        gc.fillOval(centerX - radius * 0.65, centerY - radius * 0.65, radius * 1.3, radius * 1.3);
+
+        gc.setStroke(Color.rgb(255, 245, 140, 1.0 - progress * 0.5));
+        gc.setLineWidth(4);
+
+        for (int i = 0; i < 12; i++) {
+            double angle = Math.PI * 2 * i / 12.0;
+            double startRadius = radius * 0.4;
+            double endRadius = radius * 1.4;
+
+            double x1 = centerX + Math.cos(angle) * startRadius;
+            double y1 = centerY + Math.sin(angle) * startRadius;
+            double x2 = centerX + Math.cos(angle) * endRadius;
+            double y2 = centerY + Math.sin(angle) * endRadius;
+
+            gc.strokeLine(x1, y1, x2, y2);
+        }
+    }
+
+    public void shutdown() {
+        stopGameLoop();
+        stopExplosionAnimation();
+        audioManager.stopMusic();
     }
 }
