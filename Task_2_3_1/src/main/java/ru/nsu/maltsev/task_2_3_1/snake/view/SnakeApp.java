@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.task_2_3_1.snake;
+package ru.nsu.maltsev.task_2_3_1.snake.view;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
