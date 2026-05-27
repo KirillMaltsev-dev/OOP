@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>OOP Checker Report</title>
+<style>
+body{font-family:Arial,sans-serif;margin:24px;}
+table{border-collapse:collapse;width:100%;margin-bottom:24px;}
+th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:top;}
+th{background:#f2f2f2;}
+.ok{color:green;font-weight:bold;}
+.fail{color:#b00020;font-weight:bold;}
+</style>
+</head>
+<body>
+<h1>Отчёт автоматической проверки ООП</h1>
+<h2>Итоги по студентам</h2>
+<table>
+<tr><th>Студент</th><th>GitHub</th><th>Баллы</th><th>Оценка</th></tr>
+<tr><td>Мальцев Кирилл Константинович</td><td>KirillMaltsev-dev</td><td>1.05</td><td>не аттестован</td></tr>
+</table>
+<h2>Детальная проверка</h2>
+<table>
+<tr><th>Студент</th><th>Задача</th><th>Компиляция</th><th>Javadoc</th><th>Style</th><th>Тесты</th><th>Баллы</th><th>Ошибка</th></tr>
+<tr><td>Мальцев Кирилл Константинович</td><td>Task_2_1_1</td><td><span class="ok">OK</span></td><td><span class="ok">OK</span></td><td><span class="fail">FAIL</span></td><td><span class="fail">FAIL</span><br>passed: 0<br>failed: 0<br>skipped: 0</td><td>0.45</td><td><pre>C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:27 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:33 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:61 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:67 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:68 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:124 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:179 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:192 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:195 line is longer than 100 characters
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_1_1\src\main\java\ru\nsu\maltsev\task_2_1_1\Main.java:269 line is longer than 100 characters</pre></td></tr>
+<tr><td>Мальцев Кирилл Константинович</td><td>Task_2_2_1</td><td><span class="ok">OK</span></td><td><span class="fail">FAIL</span></td><td><span class="fail">FAIL</span></td><td><span class="fail">FAIL</span><br>passed: 0<br>failed: 0<br>skipped: 0</td><td>0.6</td><td><pre>&gt; Task :compileJava UP-TO-DATE
+&gt; Task :processResources
+&gt; Task :classes
+
+&gt; Task :javadoc
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_2_1\src\main\java\ru\nsu\maltsev\task_2_2_1\Baker.java:3: warning: no comment
+public class Baker implements Runnable {
+       ^
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_2_1\src\main\java\ru\nsu\maltsev\task_2_2_1\Baker.java:9: warning: no comment
+    public Baker(int id, int cookTimeMs, OrderQueue orderQueue, Warehouse warehouse) {
+           ^
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_2_1\src\main\java\ru\nsu\maltsev\task_2_2_1\Baker.java:36: warning: no comment
+    public int getId() {
+               ^
+C:\OOP\Task_2_4_1\build\checker-work\repositories\KirillMaltsev-dev\Task_2_2_1\src\main\java\ru\nsu\maltsev\task_2_2_1\Courier.java:5: warning: no comment
+public class Courier implements Runnable {
+       ^
+C:\OOP\Task_2_4_1\build\checker-wor</pre></td></tr>
+</table>
+</body>
+</html>
+
