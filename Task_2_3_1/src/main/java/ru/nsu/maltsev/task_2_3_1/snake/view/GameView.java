@@ -9,11 +9,12 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import ru.nsu.maltsev.task_2_3_1.snake.controller.port.GameViewPort;
 import ru.nsu.maltsev.task_2_3_1.snake.model.GameModel;
 import ru.nsu.maltsev.task_2_3_1.snake.model.GameStatus;
 import ru.nsu.maltsev.task_2_3_1.snake.model.Position;
 
-public class GameView {
+public class GameView implements GameViewPort {
     private static final int EXPLOSION_MAX_FRAMES = 10;
     private static final int EXPLOSION_FRAME_MILLIS = 45;
 
@@ -53,28 +54,27 @@ public class GameView {
         this.renderer = new GameRenderer(boardCanvas);
     }
 
-    public void initialize(GameModel model) {
-        root.setFocusTraversable(true);
-        showStartMenu();
-        render(model);
-        Platform.runLater(root::requestFocus);
-    }
-
+    @Override
     public void render(GameModel model) {
         renderer.render(model);
         updateLabels(model);
     }
 
+    @Override
     public void showStartMenu() {
+        root.setFocusTraversable(true);
         setMenuVisible(startMenu, true);
         setMenuVisible(gameOverMenu, false);
+        Platform.runLater(root::requestFocus);
     }
 
+    @Override
     public void showGameScreen() {
         setMenuVisible(startMenu, false);
         setMenuVisible(gameOverMenu, false);
     }
 
+    @Override
     public void showGameOver(boolean victoryAchieved, int score) {
         if (victoryAchieved) {
             gameOverTitleLabel.setText("Victory!");
@@ -95,10 +95,12 @@ public class GameView {
         return gameOverMenu.isVisible();
     }
 
+    @Override
     public void requestFocus() {
         root.requestFocus();
     }
 
+    @Override
     public void playExplosion(GameModel model, Position explosionPosition, Runnable onFinished) {
         stopExplosionAnimation();
 
@@ -125,6 +127,7 @@ public class GameView {
         explosionTimeline.play();
     }
 
+    @Override
     public void stopExplosionAnimation() {
         if (explosionTimeline != null) {
             explosionTimeline.stop();
@@ -132,6 +135,7 @@ public class GameView {
         }
     }
 
+    @Override
     public void shutdown() {
         stopExplosionAnimation();
     }

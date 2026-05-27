@@ -1,12 +1,13 @@
-package ru.nsu.maltsev.task_2_3_1.snake.sound;
+package ru.nsu.maltsev.task_2_3_1.snake.view;
 
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import ru.nsu.maltsev.task_2_3_1.snake.controller.port.SoundPlayer;
 
 import java.net.URL;
 
-public class AudioManager {
+public class JavaFxSoundPlayer implements SoundPlayer {
     private static final String MENU_MUSIC = "/ru/nsu/maltsev/task_2_3_1/snake/audio/menu.mp3";
     private static final String GAME_MUSIC = "/ru/nsu/maltsev/task_2_3_1/snake/audio/game.mp3";
     private static final String DEATH_SOUND = "/ru/nsu/maltsev/task_2_3_1/snake/audio/death.wav";
@@ -19,39 +20,46 @@ public class AudioManager {
     private AudioClip eatSound;
     private String currentMusicPath;
 
-    public AudioManager() {
+    public JavaFxSoundPlayer() {
         deathSound = loadAudioClip(DEATH_SOUND);
         eatSound = loadAudioClip(EAT_SOUND);
     }
 
+    @Override
     public void playMenuMusic() {
         playLoop(MENU_MUSIC, 0.35, 1.0);
     }
 
+    @Override
     public void playGameMusic() {
         playLoop(GAME_MUSIC, 0.30, 1.0);
     }
 
+    @Override
     public void playWinMusic() {
         playOnce(WIN_MUSIC, 0.8);
     }
 
+    @Override
     public void playLoseMusic() {
         playOnce(LOSE_MUSIC, 0.8);
     }
 
+    @Override
     public void playDeathSound() {
         if (deathSound != null) {
             deathSound.play(0.5);
         }
     }
 
+    @Override
     public void playEatSound() {
         if (eatSound != null) {
             eatSound.play(0.3);
         }
     }
 
+    @Override
     public void stopMusic() {
         if (currentMusic != null) {
             currentMusic.stop();
@@ -68,28 +76,32 @@ public class AudioManager {
 
         stopMusic();
 
-        currentMusic = loadMediaPlayer(path);
-        currentMusicPath = path;
-
-        if (currentMusic != null) {
-            currentMusic.setCycleCount(MediaPlayer.INDEFINITE);
-            currentMusic.setVolume(volume);
-            currentMusic.setRate(rate);
-            currentMusic.play();
+        MediaPlayer player = loadMediaPlayer(path);
+        if (player == null) {
+            return;
         }
+
+        currentMusic = player;
+        currentMusicPath = path;
+        currentMusic.setCycleCount(MediaPlayer.INDEFINITE);
+        currentMusic.setVolume(volume);
+        currentMusic.setRate(rate);
+        currentMusic.play();
     }
 
     private void playOnce(String path, double volume) {
         stopMusic();
 
-        currentMusic = loadMediaPlayer(path);
-        currentMusicPath = path;
-
-        if (currentMusic != null) {
-            currentMusic.setCycleCount(1);
-            currentMusic.setVolume(volume);
-            currentMusic.play();
+        MediaPlayer player = loadMediaPlayer(path);
+        if (player == null) {
+            return;
         }
+
+        currentMusic = player;
+        currentMusicPath = path;
+        currentMusic.setCycleCount(1);
+        currentMusic.setVolume(volume);
+        currentMusic.play();
     }
 
     private MediaPlayer loadMediaPlayer(String path) {
