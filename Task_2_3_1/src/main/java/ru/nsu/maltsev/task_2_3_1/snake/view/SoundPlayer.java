@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.task_2_3_1.snake.controller.port;
+package ru.nsu.maltsev.task_2_3_1.snake.view;
 
 public interface SoundPlayer {
     void playMenuMusic();

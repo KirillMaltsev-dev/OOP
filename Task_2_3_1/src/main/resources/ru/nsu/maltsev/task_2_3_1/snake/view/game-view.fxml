@@ -13,7 +13,7 @@
            prefHeight="700"
            style="-fx-background-color: linear-gradient(to bottom, #dff6ff, #bfe8ff);"
            xmlns:fx="http://javafx.com/fxml"
-           fx:controller="ru.nsu.maltsev.task_2_3_1.snake.view.JavaFxGameViewController">
+           fx:controller="ru.nsu.maltsev.task_2_3_1.snake.view.impl.JavaFxGameViewController">
 
     <BorderPane fx:id="gamePane"
                 prefWidth="760"

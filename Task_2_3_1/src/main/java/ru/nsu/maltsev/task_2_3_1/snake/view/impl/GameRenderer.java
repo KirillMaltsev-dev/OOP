@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.task_2_3_1.snake.view;
+package ru.nsu.maltsev.task_2_3_1.snake.view.impl;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

@@ -1,9 +1,9 @@
-package ru.nsu.maltsev.task_2_3_1.snake.view;
+package ru.nsu.maltsev.task_2_3_1.snake.view.impl;
 
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import ru.nsu.maltsev.task_2_3_1.snake.controller.port.SoundPlayer;
+import ru.nsu.maltsev.task_2_3_1.snake.view.SoundPlayer;
 
 import java.net.URL;
 

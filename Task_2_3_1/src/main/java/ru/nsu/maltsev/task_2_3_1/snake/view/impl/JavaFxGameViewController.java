@@ -1,4 +1,4 @@
-package ru.nsu.maltsev.task_2_3_1.snake.view;
+package ru.nsu.maltsev.task_2_3_1.snake.view.impl;
 
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
-import ru.nsu.maltsev.task_2_3_1.snake.controller.GameController;
+import ru.nsu.maltsev.task_2_3_1.snake.view.GameController;
 import ru.nsu.maltsev.task_2_3_1.snake.model.Direction;
 
 public class JavaFxGameViewController {
@@ -37,12 +37,12 @@ public class JavaFxGameViewController {
     @FXML
     private Label gameOverScoreLabel;
 
-    private GameView gameView;
+    private GameViewImpl gameViewImpl;
     private GameController gameController;
 
     @FXML
     private void initialize() {
-        gameView = new GameView(
+        gameViewImpl = new GameViewImpl(
                 root,
                 startMenu,
                 gameOverMenu,
@@ -55,7 +55,7 @@ public class JavaFxGameViewController {
         );
 
         gameController = new GameController(
-                gameView,
+                gameViewImpl,
                 new JavaFxGameLoop(),
                 new JavaFxSoundPlayer()
         );
@@ -79,12 +79,12 @@ public class JavaFxGameViewController {
     }
 
     private void handleKeyPressed(KeyEvent event) {
-        if (gameView.isStartMenuVisible()) {
+        if (gameViewImpl.isStartMenuVisible()) {
             handleStartMenuKey(event);
             return;
         }
 
-        if (gameView.isGameOverMenuVisible()) {
+        if (gameViewImpl.isGameOverMenuVisible()) {
             handleGameOverKey(event);
             return;
         }

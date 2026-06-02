@@ -1,8 +1,5 @@
-package ru.nsu.maltsev.task_2_3_1.snake.controller;
+package ru.nsu.maltsev.task_2_3_1.snake.view;
 
-import ru.nsu.maltsev.task_2_3_1.snake.controller.port.GameLoop;
-import ru.nsu.maltsev.task_2_3_1.snake.controller.port.GameViewPort;
-import ru.nsu.maltsev.task_2_3_1.snake.controller.port.SoundPlayer;
 import ru.nsu.maltsev.task_2_3_1.snake.model.Direction;
 import ru.nsu.maltsev.task_2_3_1.snake.model.GameConfig;
 import ru.nsu.maltsev.task_2_3_1.snake.model.GameModel;
@@ -10,11 +7,11 @@ import ru.nsu.maltsev.task_2_3_1.snake.model.GameStatus;
 
 public class GameController {
     private final GameModel model;
-    private final GameViewPort gameView;
+    private final GameView gameView;
     private final GameLoop gameLoop;
     private final SoundPlayer soundPlayer;
 
-    public GameController(GameViewPort gameView, GameLoop gameLoop, SoundPlayer soundPlayer) {
+    public GameController(GameView gameView, GameLoop gameLoop, SoundPlayer soundPlayer) {
         this.model = new GameModel(GameConfig.defaultConfig());
         this.gameView = gameView;
         this.gameLoop = gameLoop;

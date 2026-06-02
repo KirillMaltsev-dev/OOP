@@ -1,10 +1,10 @@
-package ru.nsu.maltsev.task_2_3_1.snake.view;
+package ru.nsu.maltsev.task_2_3_1.snake.view.impl;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
-import ru.nsu.maltsev.task_2_3_1.snake.controller.port.GameLoop;
+import ru.nsu.maltsev.task_2_3_1.snake.view.GameLoop;
 
 public class JavaFxGameLoop implements GameLoop {
     private Timeline timeline;
